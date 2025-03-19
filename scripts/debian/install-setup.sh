@@ -16,6 +16,12 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+if [ "$SCRIPT_SOURCE" = "PIPE" ]; then
+    echo "Running from a pipe"
+else
+    echo "Running from a file: $0"
+fi
+
 install_dialog() {
     if ! command -v dialog &> /dev/null; then
         echo -e "${GREEN}${BOLD}Installing dialog package...${RESET}"
