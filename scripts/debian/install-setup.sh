@@ -70,7 +70,7 @@ run_gnome_basic() {
 
 run_flatpak_debian() {
     echo -e "${GREEN}${BOLD}Running flatpak-debian.sh...${RESET}"
-    ./flatpak-debian.sh
+    bash -i ./flatpak-debian.sh
 }
 
 run_flathub_packages() {
