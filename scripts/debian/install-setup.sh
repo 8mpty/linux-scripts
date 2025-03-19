@@ -17,9 +17,24 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 if [ "$SCRIPT_SOURCE" = "PIPE" ]; then
-    echo "Running from a pipe"
+    echo -e "${GREEN}${BOLD}Running from curl pipe. Setting up repository...${RESET}"
+    TEMP_DIR=$(mktemp -d)
+    echo -e "${GREEN}${BOLD}Cloning repository...${RESET}"
+
+    git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR" || {
+        echo -e "${YELLOW}${BOLD}Failed to clone repository. Checking if git is installed...${RESET}"
+        apt update && apt install git -y
+        git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR"
+    }
+    
+    # Change to the scripts directory
+    cd "$TEMP_DIR"
+    git switch dev
+    cd "scripts/debian"
+    chmod +x *.sh
+    echo -e "${GREEN}${BOLD}Repository set up. Running from: $(pwd)${RESET}"
 else
-    echo "Running from a file: $0"
+    echo -e "${GREEN}${BOLD}Running locally from: $0${RESET}"
 fi
 
 install_dialog() {
@@ -122,6 +137,7 @@ main() {
     install_dialog
     show_menu
     echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
+    rm -rf "$TEMP_DIR"
 }
 
 main

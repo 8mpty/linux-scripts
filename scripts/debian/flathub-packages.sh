@@ -14,14 +14,15 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 flatpak_apps=(
-    "flathub one.ablaze.floorp"
-    #"flathub com.google.AndroidStudio"
+    "one.ablaze.floorp"
+    "com.mattjakeman.ExtensionManager"
+    #"com.google.AndroidStudio"
 )
 
 installApps() {
     for app in "${flatpak_apps[@]}"; do
         echo "Installing $app..."
-        sudo flatpak install $app
+        flatpak install flathub $app -y
     done
 }
 
