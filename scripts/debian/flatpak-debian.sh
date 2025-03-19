@@ -58,7 +58,7 @@ echo -e "  flatpak install flathub <application-id>"
 
 # Ask if user wants to reboot
 echo
-echo -e "${YELLOW}${BOLD}It's recommended to restart your system for changes to take full effect.${RESET}"
+echo -e "${YELLOW}${BOLD}It's recommended to restart your system for changes to take full effect and required to install flathub packages.${RESET}"
 read -p "Would you like to reboot now? (y/N): " choice
 case "$choice" in
   y|Y|yes|Yes|YES )
