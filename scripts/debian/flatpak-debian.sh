@@ -62,7 +62,7 @@ echo -e "${YELLOW}${BOLD}It's recommended to restart your system for changes to 
 read -p "Would you like to reboot now? (y/N): " choice
 case "$choice" in
   y|Y|yes|Yes|YES )
-    echo "System will reboot now..."
+    echo "System will reboot now...."
     shutdown -r now
     ;;
   * )
