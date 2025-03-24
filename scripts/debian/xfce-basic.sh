@@ -17,7 +17,7 @@ check_root() {
 }
 
 package_manager_choice() {
-  read -p "Would you like to install using Nala (Y/n)? [default: y] " choice
+  read -t 5 -p "Would you like to install using Nala (Y/n)? [default: y] " choice
 
   # If no input or any invalid input, default to 'y'
   case "${choice,,}" in

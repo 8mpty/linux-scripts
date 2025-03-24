@@ -1,8 +1,5 @@
 #!/bin/bash
 
-SCRIPT_SOURCE="FILE"
-[ -t 0 ] || SCRIPT_SOURCE="PIPE"
-
 # Exit on any error
 set -e
 
@@ -34,6 +31,7 @@ check_script_exec(){
 main(){
     check_script_exec
     ./install-setup.sh
+    rm -rf "$TEMP_DIR"
 }
 
 main

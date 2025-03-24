@@ -143,7 +143,6 @@ main() {
     show_menu
     echo
     echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
-    rm -rf "$TEMP_DIR"
 }
 
 main
