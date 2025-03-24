@@ -62,12 +62,12 @@ run_gnome_basic() {
 
 run_xfce_basic() {
     echo -e "${GREEN}${BOLD}Running xfce-basic.sh...${RESET}"
-    ./xfce-basic.sh
+    bash -i ./xfce-basic.sh
 }
 
 run_flatpak_debian() {
     echo -e "${GREEN}${BOLD}Running flatpak-debian.sh...${RESET}"
-    bash -i ./flatpak-debian.sh
+    ./flatpak-debian.sh
 }
 
 run_flathub_packages() {
