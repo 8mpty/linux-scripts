@@ -19,28 +19,6 @@ check_root() {
   fi
 }
 
-check_script_exec(){
-    if [ "$SCRIPT_SOURCE" = "PIPE" ]; then
-        echo -e "${GREEN}${BOLD}Running from curl pipe. Setting up repository...${RESET}"
-        TEMP_DIR=$(mktemp -d)
-        echo -e "${GREEN}${BOLD}Cloning repository...${RESET}"
-
-        git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR" || {
-            echo -e "${YELLOW}${BOLD}Failed to clone repository. Checking if git is installed...${RESET}"
-            apt update && apt install git curl -y
-            git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR"
-        }
-        
-        # Change to the scripts directory
-        cd "$TEMP_DIR"
-        git switch dev
-        cd "scripts/debian"
-        chmod +x *.sh
-        echo -e "${GREEN}${BOLD}Repository set up. Running from: $(pwd)${RESET}"
-    else
-        echo -e "${GREEN}${BOLD}Running locally from: $0${RESET}"
-    fi
-}
 
 install_dialog() {
     if ! command -v dialog &> /dev/null; then
@@ -49,6 +27,10 @@ install_dialog() {
         apt-get install -y dialog
     fi
 }
+
+
+
+
 
 run_enable_firewall() {
     echo -e "${GREEN}${BOLD}Installing ufw and Gufw...${RESET}"
@@ -62,7 +44,7 @@ run_gnome_basic() {
 
 run_xfce_basic() {
     echo -e "${GREEN}${BOLD}Running xfce-basic.sh...${RESET}"
-    bash -i ./xfce-basic.sh
+    ./xfce-basic.sh
 }
 
 run_flatpak_debian() {
@@ -80,6 +62,10 @@ run_update_grub() {
     echo -e "${GREEN}${BOLD}Running update_grub_timeout.sh...${RESET}"
     ./update_grub_timeout.sh
 }
+
+
+
+
 
 show_menu() {
     tempfile=$(mktemp 2>/dev/null) || tempfile=/tmp/test$$
@@ -151,7 +137,6 @@ show_menu() {
 
 main() {
     check_root
-    check_script_exec
     install_dialog
     show_menu
     echo
