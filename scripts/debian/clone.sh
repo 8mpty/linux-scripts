@@ -25,14 +25,14 @@ check_script_exec(){
         TEMP_DIR=$(mktemp -d)
         echo -e "${GREEN}${BOLD}Cloning repository...${RESET}"
 
-        git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR" || {
+        git clone https://github.com/8mpty/linux-scripts.git || {
             echo -e "${YELLOW}${BOLD}Failed to clone repository. Checking if git is installed...${RESET}"
             apt update && apt install git curl -y
-            git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR"
+            git clone https://github.com/8mpty/linux-scripts.git
         }
         
         # Change to the scripts directory
-        cd "$TEMP_DIR"
+        cd "linux-scripts"
         git switch dev
         cd "scripts/debian"
         chmod +x install-setup.sh
