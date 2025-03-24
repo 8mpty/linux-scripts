@@ -14,9 +14,10 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 flatpak_apps=(
-    "one.ablaze.floorp"
-    "com.mattjakeman.ExtensionManager"
-    #"com.google.AndroidStudio"
+    #"one.ablaze.floorp",
+    #"com.mattjakeman.ExtensionManager",
+    #"com.google.AndroidStudio",
+    app.zen_browser.zen
 )
 
 installApps() {
