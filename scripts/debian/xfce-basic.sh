@@ -49,7 +49,7 @@ install_nala() {
 }
 
 PACKAGE_LIST="git curl neofetch micro kitty xorg xserver-xorg-video-all xserver-xorg-input-all desktop-base xdg-utils fonts-symbola avahi-daemon libnss-mdns anacron eject iw alsa-utils sudo cups tasksel=3.73 lightdm light-locker xfce4-power-manager mousepad default-dbus-session-bus atril tango-icon-theme network-manager-gnome synaptic system-config-printer orca libxfce4ui-utils thunar xfce4-appfinder xfce4-panel xfce4-pulseaudio-plugin xfce4-session xfce4-settings xfconf xfdesktop4 xfwm4 mousepad thunar-archive-plugin thunar-media-tags-plugin xfce4-battery-plugin xfce4-clipman-plugin xfce4-cpufreq-plugin xfce4-cpugraph-plugin xfce4-dict xfce4-diskperf-plugin xfce4-fsguard-plugin xfce4-genmon-plugin xfce4-netload-plugin xfce4-notifyd xfce4-places-plugin xfce4-screenshooter xfce4-sensors-plugin xfce4-smartbookmark-plugin xfce4-systemload-plugin xfce4-taskmanager xfce4-timer-plugin xfce4-verve-plugin xfce4-wavelan-plugin xfce4-weather-plugin xfce4-whiskermenu-plugin xfce4-xkb-plugin"
-PURGE_LIST="imagemagick"
+PURGE_LIST="xterm imagemagick"
 
 # Function to install basic xfce stuff and some "goodies" from "xfce4-goodies"
 install_xfce() {
@@ -62,7 +62,7 @@ install_xfce() {
 
   # Use (Nala or APT) to install the packages
   $PM install $PACKAGE_LIST -y
-  $PM purge $PURGE_LIST -y
+  # $PM purge $PURGE_LIST -y
 
   sed -i 's/^#greeter-hide-users=false/greeter-hide-users=false/' /etc/lightdm/lightdm.conf
 
