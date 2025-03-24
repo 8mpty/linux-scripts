@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT_SOURCE="FILE"
+[ -t 0 ] || SCRIPT_SOURCE="PIPE"
+
 # Exit on any error
 set -e
 
@@ -10,21 +13,23 @@ RESET="\e[0m"
 
 check_script_exec(){
     echo -e "${GREEN}${BOLD}Running from curl pipe. Setting up repository...${RESET}"
+    TEMP_DIR=$(mktemp -d)
     echo -e "${GREEN}${BOLD}Cloning repository...${RESET}"
 
-    git clone https://github.com/8mpty/linux-scripts.git || {
+    git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR" || {
         echo -e "${YELLOW}${BOLD}Failed to clone repository. Checking if git is installed...${RESET}"
         apt update && apt install git curl -y
-        git clone https://github.com/8mpty/linux-scripts.git
+        git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR"
     }
     
     # Change to the scripts directory
-    cd "linux-scripts"
+    cd "$TEMP_DIR"
     git switch dev
     cd "scripts/debian"
     chmod +x install-setup.sh
     echo -e "${GREEN}${BOLD}Repository set up. Running from: $(pwd)${RESET}"
 }
+
 
 main(){
     check_script_exec

@@ -14,11 +14,21 @@ RESET="\e[0m"
 # Function to check if script is running with root privileges
 check_root() {
   if [ "$EUID" -ne 0 ]; then
-    echo -e "${YELLOW}${BOLD}Please run this script with sudo privileges.${RESET}"
-    exit 1
+    echo -e "${YELLOW}${BOLD}This script requires root privileges.${RESET}"
+    echo -e "${GREEN}Attempting to elevate privileges...${RESET}"
+    
+    # Try to use sudo to re-run the script
+    if command -v sudo &> /dev/null; then
+      echo -e "${YELLOW}${BOLD}Please enter your sudo password to continue.${RESET}"
+      exec sudo -E bash "$0" "$@"
+      exit $?
+    else
+      echo -e "${RED}${BOLD}Error: sudo is not installed. Cannot elevate privileges.${RESET}"
+      echo "Please install sudo or run the script as root manually."
+      exit 1
+    fi
   fi
 }
-
 
 install_dialog() {
     if ! command -v dialog &> /dev/null; then
@@ -27,10 +37,6 @@ install_dialog() {
         apt-get install -y dialog
     fi
 }
-
-
-
-
 
 run_enable_firewall() {
     echo -e "${GREEN}${BOLD}Installing ufw and Gufw...${RESET}"
@@ -62,10 +68,6 @@ run_update_grub() {
     echo -e "${GREEN}${BOLD}Running update_grub_timeout.sh...${RESET}"
     ./update_grub_timeout.sh
 }
-
-
-
-
 
 show_menu() {
     tempfile=$(mktemp 2>/dev/null) || tempfile=/tmp/test$$
