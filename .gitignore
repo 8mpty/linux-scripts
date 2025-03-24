@@ -1,0 +1,10 @@
+# Ignore everything
+*
+
+# Allow specific files and folders
+!scripts/
+!scripts/**
+
+!.gitignore
+!.gitattributes
+!.README.md
