@@ -55,6 +55,15 @@ install_flatpak_repo(){
   echo -e "${GREEN}${BOLD}Adding Flathub repository...${RESET}"
   flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
+  # Get the current username and home directory dynamically
+  USERNAME=$(whoami)
+  HOMEDIR=$(eval echo ~$USERNAME)
+
+  # Fix permissions for Flatpak repository
+  echo -e "${GREEN}${BOLD}Fixing Flatpak repository permissions...${RESET}"
+  sudo chown -R "$USERNAME:$USERNAME" "$HOMEDIR/.local/share/flatpak"
+  sudo chmod -R u+rw "$HOMEDIR/.local/share/flatpak"
+
   echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
   echo -e "To install applications from Flathub, use your software center or run:"
   echo -e "  flatpak install flathub <application-id>"

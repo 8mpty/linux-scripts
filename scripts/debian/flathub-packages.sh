@@ -8,10 +8,12 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 RESET="\e[0m"
 
-if [ "$EUID" -ne 0 ]; then
+check_root() {
+  if [ "$EUID" -ne 0 ]; then
     echo -e "${YELLOW}${BOLD}Please run this script with sudo privileges.${RESET}"
     exit 1
-fi
+  fi
+}
 
 flatpak_apps=(
     #"one.ablaze.floorp",
@@ -27,6 +29,10 @@ installApps() {
     done
 }
 
-installApps
+main(){
+    # check_root
+    installApps
+}
+
 
 echo "All applications have been installed."
