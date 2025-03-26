@@ -114,7 +114,7 @@ configure_laptop_utils(){
 
     echo
     echo -e "${GREEN}${BOLD}Installing Bluetooth...${RESET}"
-    apt install bluez blueman -y
+    apt install blueman -y
 
     echo
     echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
