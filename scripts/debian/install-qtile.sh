@@ -103,22 +103,28 @@ configure_laptop_utils(){
     echo -e "${GREEN}${BOLD}Installing laptop utils...${RESET}"
     apt update
 
+    echo
     echo -e "${GREEN}${BOLD}Installing Audio...${RESET}"
     apt install pipewire pipewire-pulse wireplumber -y
     apt install --no-install-recommends pavucontrol -y
 
+    echo
     echo -e "${GREEN}${BOLD}Installing Display | Brightness...${RESET}"
     apt install brightnessctl xfce4-power-manager -y
 
+    echo
     echo -e "${GREEN}${BOLD}Installing Bluetooth...${RESET}"
     apt install bluez blueman -y
 
+    echo
     echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
     apt install network-manager nm-tray -y
 
+    echo
     echo -e "${GREEN}${BOLD}Installing Screen Lock...${RESET}"
     apt install light-locker -y
 
+    echo
     echo -e "${GREEN}${BOLD}Successfully installed laptop utils.${RESET}"
 }
 

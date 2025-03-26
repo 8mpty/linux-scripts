@@ -74,6 +74,12 @@ run_update_grub() {
     ./update_grub_timeout.sh
 }
 
+run_reboot() {
+    echo -e "${GREEN}${BOLD}Rebooting in 5 seconds. Press Ctrl + C NOW to cancel!${RESET}"
+    sleep 5
+    reboot
+}
+
 show_menu() {
     tempfile=$(mktemp 2>/dev/null) || tempfile=/tmp/test$$
     trap 'rm -f $tempfile' 0 1 2 5 15
@@ -140,7 +146,7 @@ show_menu() {
                 run_update_grub
                 ;;
             "reboot")
-                reboot
+                run_reboot
                 ;;
         esac
     done

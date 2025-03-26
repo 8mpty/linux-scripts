@@ -23,10 +23,26 @@ flatpak_apps=(
 )
 
 installApps() {
-    for app in "${flatpak_apps[@]}"; do
-        echo "Installing $app..."
-        flatpak install flathub $app -y
-    done
+  # Get the current username and home directory dynamically
+  USERNAME=$(logname)
+  HOMEDIR=$(eval echo ~"$REAL_USER")
+
+  # Fix permissions for Flatpak repository
+  echo -e "${GREEN}${BOLD}Fixing Flatpak repository permissions...${RESET}"
+
+  FLATPAK_DIR="$HOMEDIR/.local/share/flatpak"
+
+  if [ -d "$FLATPAK_DIR" ]; then
+    chown -R "$USERNAME:$USERNAME" "$FLATPAK_DIR"
+    chmod -R u+rw "$FLATPAK_DIR"
+  else
+    echo -e "${YELLOW}${BOLD}Skipping: $FLATPAK_DIR does not exist.${RESET}"
+  fi
+
+  for app in "${flatpak_apps[@]}"; do
+    echo "Installing $app..."
+    flatpak install flathub $app -y
+  done
 }
 
 main(){
