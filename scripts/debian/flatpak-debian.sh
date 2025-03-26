@@ -56,8 +56,8 @@ install_flatpak_repo(){
   flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
   # Get the current username and home directory dynamically
-  USERNAME=$(whoami)
-  HOMEDIR=$(eval echo ~$USERNAME)
+  USERNAME=$(logname)
+  HOMEDIR=$(eval echo ~"$REAL_USER")
 
   # Fix permissions for Flatpak repository
   echo -e "${GREEN}${BOLD}Fixing Flatpak repository permissions...${RESET}"
