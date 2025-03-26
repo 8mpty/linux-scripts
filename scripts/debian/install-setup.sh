@@ -89,10 +89,10 @@ show_menu() {
            --checklist "Use SPACE to select/deselect options, ENTER to confirm:" 15 90 5 \
            "gnome-basic" " Install GNOME basic packages" OFF \
            "xfce-basic" " Install Xfce basic packages with some xfce4-goodies" OFF \
+           "install-qtile" " Install Qtile WM and LightDM" OFF \
            "enable-firewall" " Setup and enable firewall" OFF \
            "flatpak-debian" " Install Flatpak for Debian" OFF \
            "flathub-packages" " Install Flathub packages" OFF \
-           "install-qtile" " Install Qtile WM and LightDM" OFF \
            "update_grub_timeout" " Update GRUB timeout to 2secs" OFF \
            "reboot" " Reboot system (HIGHLY Recommended)" OFF \
            2> $tempfile
@@ -130,6 +130,9 @@ show_menu() {
             "xfce-basic")
                 run_xfce_basic
                 ;;
+            "install-qtile")
+                run_qtile
+                ;;
             "enable-firewall")
                 run_enable_firewall
                 ;;
@@ -138,9 +141,6 @@ show_menu() {
                 ;;
             "flathub-packages")
                 run_flathub_packages
-                ;;
-            "install-qtile")
-                run_qtile
                 ;;
             "update_grub_timeout")
                 run_update_grub
