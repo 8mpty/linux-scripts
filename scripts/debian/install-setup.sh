@@ -63,6 +63,11 @@ run_flathub_packages() {
     ./flathub-packages.sh
 }
 
+run_qtile() {
+    echo -e "${GREEN}${BOLD}Running install-qtile.sh...${RESET}"
+    ./install-qtile.sh
+}
+
 # Will always be LAST in the menu
 run_update_grub() {
     echo -e "${GREEN}${BOLD}Running update_grub_timeout.sh...${RESET}"
@@ -81,6 +86,7 @@ show_menu() {
            "enable-firewall" " Setup and enable firewall" OFF \
            "flatpak-debian" " Install Flatpak for Debian" OFF \
            "flathub-packages" " Install Flathub packages" OFF \
+           "install-qtile" " Install Qtile WM and LightDM" OFF \
            "update_grub_timeout" " Update GRUB timeout to 2secs" OFF \
            "reboot" " Reboot system (HIGHLY Recommended)" OFF \
            2> $tempfile
@@ -126,6 +132,9 @@ show_menu() {
                 ;;
             "flathub-packages")
                 run_flathub_packages
+                ;;
+            "install-qtile")
+                run_qtile
                 ;;
             "update_grub_timeout")
                 run_update_grub
