@@ -29,7 +29,7 @@ extra_decision() {
       lapchoice="false"
       ;;
     *)
-      echo -e "${YELLOW}No valid input detected. .${RESET}"
+      echo -e "${YELLOW}No valid input detected. Defaulting to Y.${RESET}"
       lapchoice="true"
       ;;
   esac
@@ -43,7 +43,7 @@ extra_decision() {
       ldmchoice="false"
       ;;
     *)
-      echo -e "${YELLOW}No valid input detected. .${RESET}"
+      echo -e "${YELLOW}No valid input detected. Defaulting to Y.${RESET}"
       ldmchoice="true"
       ;;
   esac
