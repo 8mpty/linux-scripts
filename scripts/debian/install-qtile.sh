@@ -16,21 +16,54 @@ check_root() {
   fi
 }
 
+extra_decision() {
+  read -t 5 -p "Would you like to install laptop utils (bluetooth, wifi etc.)? [default: y] " lapchoice
+  read -t 5 -p "Would you like to auto install and configure lightdm? [default: y] " ldmchoice
+
+  # If no input or any invalid input, default to 'y'
+  case "${lapchoice,,}" in
+    [Yy]*)
+      lapchoice="true"
+      ;;
+    [Nn]*)
+      lapchoice="false"
+      ;;
+    *)
+      echo -e "${YELLOW}No valid input detected. .${RESET}"
+      lapchoice="true"
+      ;;
+  esac
+  
+  # If no input or any invalid input, default to 'y'
+  case "${ldmchoice,,}" in
+    [Yy]*)
+      ldmchoice="true"
+      ;;
+    [Nn]*)
+      ldmchoice="false"
+      ;;
+    *)
+      echo -e "${YELLOW}No valid input detected. .${RESET}"
+      ldmchoice="true"
+      ;;
+  esac
+}
+
 # Get the real user who invoked sudo
 REAL_USER=$(logname)
 REAL_USER_HOME=$(eval echo ~"$REAL_USER")
 
-OTHERS_LIST="git curl rofi lightdm kitty"
-QTILE_LIST="xorg xserver-xorg xinit python3 python3-pip python3-venv python3-v-sim python-dbus-dev python3-xcffib python3-cairocffi libpangocairo-1.0-0 libxkbcommon-x11-dev sxiv"
+OTHERS_LIST="git curl rofi kitty neofetch micro thunar"
+PYTHON_LIST="python3 python3-pip python3-venv python3-v-sim python-dbus-dev python3-xcffib python3-cairocffi"
+QTILE_LIST="xorg xserver-xorg xinit xdg-utils libpangocairo-1.0-0 libxkbcommon-x11-dev sxiv psutils"
 
 install_dependencies(){
     echo
     echo -e "${GREEN}${BOLD}Installing Qtile Dependencies...${RESET}"
-    apt update && apt install $OTHERS_LIST $QTILE_LIST -y
+    apt update && apt install $OTHERS_LIST $PYTHON_LIST $QTILE_LIST -y
     echo -e "${GREEN}${BOLD}Finished installing of Qtile Dependencies...${RESET}"
 }
 
-# Maybe install pulsectl-asyncio???
 configuration(){
     echo
     echo -e "${GREEN}${BOLD}Configuring Qtile...${RESET}"
@@ -44,17 +77,17 @@ configuration(){
     sudo -u "$REAL_USER" bash -c "cd \"$REAL_USER_HOME/.local/src\" && python3 -m venv qtile_venv"
 
     # Clone Qtile repository
-    sudo -u "$REAL_USER" bash -c "cd \"$REAL_USER_HOME/.local/src/qtile_venv\" && rm -rf qtile/ && git clone https://github.com/qtile/qtile.git"
+    sudo -u "$REAL_USER" bash -c "cd \"$REAL_USER_HOME/.local/src/qtile_venv\" "
 
     echo
 
     echo -e "${GREEN}${BOLD}Installing Python Packages...${RESET}"
-    sudo -u "$REAL_USER" bash -c "\"$REAL_USER_HOME/.local/src/qtile_venv/bin/pip\" install \"$REAL_USER_HOME/.local/src/qtile_venv/qtile/.\" qtile-extras psutils"
+    sudo -u "$REAL_USER" bash -c "\"$REAL_USER_HOME/.local/src/qtile_venv/bin/pip\" install qtile qtile-extras psutil"
 
     echo
 
     echo -e "${GREEN}${BOLD}Copying into $REAL_USER_HOME/.local/bin...${RESET}"
-    sudo -u "$REAL_USER" bash -c "rm -rf \"$REAL_USER_HOME/.local/bin/qtile\" && cp -rp \"$REAL_USER_HOME/.local/src/qtile_venv/bin/qtile\" \"$REAL_USER_HOME/.local/bin\""
+    sudo -u "$REAL_USER" bash -c "cp -rp \"$REAL_USER_HOME/.local/src/qtile_venv/bin/qtile\" \"$REAL_USER_HOME/.local/bin\""
 
     # Append to .bashrc only if the line doesn't already exist
     sudo -u "$REAL_USER" bash -c "
@@ -65,23 +98,65 @@ configuration(){
     "
 }
 
+configure_laptop_utils(){
+    echo
+    echo -e "${GREEN}${BOLD}Installing laptop utils...${RESET}"
+    apt update
+
+    echo -e "${GREEN}${BOLD}Installing Audio...${RESET}"
+    apt install pipewire pipewire-pulse wireplumber -y
+    apt install --no-install-recommends pavucontrol -y
+
+    echo -e "${GREEN}${BOLD}Installing Display | Brightness...${RESET}"
+    apt install brightnessctl xfce4-power-manager -y
+
+    echo -e "${GREEN}${BOLD}Installing Bluetooth...${RESET}"
+    apt install bluez blueman -y
+
+    echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
+    apt install network-manager nm-tray -y
+
+    echo -e "${GREEN}${BOLD}Installing Screen Lock...${RESET}"
+    apt install light-locker -y
+
+    echo -e "${GREEN}${BOLD}Successfully installed laptop utils.${RESET}"
+}
 
 configure_lightdm(){
     echo
-    echo -e "${GREEN}${BOLD}Configuring LightDM...${RESET}"
+    echo -e "${GREEN}${BOLD}Installing and Configuring LightDM...${RESET}"
     
+    apt update && apt install lightdm -y
+
     systemctl enable lightdm
 
     echo -e "[Desktop Entry]\nName=Qtile\nComment=Qtile Session\nExec=$REAL_USER_HOME/.local/bin/qtile start\nType=Application\nKeywords=wm;tiling" > /usr/share/xsessions/qtile.desktop
 
+    sed -i 's/^#greeter-hide-users=false/greeter-hide-users=false/' /etc/lightdm/lightdm.conf
+
     echo -e "${GREEN}${BOLD}LightDM configured to start Qtile.${RESET}"
+}
+
+disclaimers(){
+    echo -e "${YELLOW}${BOLD}Installation Finished!.${RESET}"
+    echo -e "${YELLOW}${BOLD}Please do the necessary configuration if you already have a Desktop Environment Installed.${RESET}"
 }
 
 main(){
     check_root
+    extra_decision
     install_dependencies
     configuration
-    configure_lightdm
+    if [ "$lapchoice" == "true" ]; then
+        configure_laptop_utils
+    fi
+
+    if [ "$ldmchoice" == "true" ]; then
+        configure_lightdm
+    fi
+
+    # END
+    disclaimers
 }
 
 main

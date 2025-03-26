@@ -30,9 +30,9 @@ installApps() {
 }
 
 main(){
-    # check_root
+    check_root
     installApps
 }
 
-
+main
 echo "All applications have been installed."
