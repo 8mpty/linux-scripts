@@ -61,8 +61,15 @@ install_flatpak_repo(){
 
   # Fix permissions for Flatpak repository
   echo -e "${GREEN}${BOLD}Fixing Flatpak repository permissions...${RESET}"
-  sudo chown -R "$USERNAME:$USERNAME" "$HOMEDIR/.local/share/flatpak"
-  sudo chmod -R u+rw "$HOMEDIR/.local/share/flatpak"
+
+  FLATPAK_DIR="$HOMEDIR/.local/share/flatpak"
+
+  if [ -d "$FLATPAK_DIR" ]; then
+    chown -R "$USERNAME:$USERNAME" "$FLATPAK_DIR"
+    chmod -R u+rw "$FLATPAK_DIR"
+  else
+    echo -e "${YELLOW}${BOLD}Skipping: $FLATPAK_DIR does not exist.${RESET}"
+  fi
 
   echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
   echo -e "To install applications from Flathub, use your software center or run:"
