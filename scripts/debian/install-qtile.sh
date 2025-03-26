@@ -60,7 +60,7 @@ QTILE_LIST="xorg xserver-xorg xinit xdg-utils libpangocairo-1.0-0 libxkbcommon-x
 install_dependencies(){
     echo
     echo -e "${GREEN}${BOLD}Installing Qtile Dependencies...${RESET}"
-    apt update && apt install $OTHERS_LIST $PYTHON_LIST $QTILE_LIST -y
+    apt update && apt install --no-install-recommends $OTHERS_LIST $PYTHON_LIST $QTILE_LIST -y
     echo -e "${GREEN}${BOLD}Finished installing of Qtile Dependencies...${RESET}"
 }
 
