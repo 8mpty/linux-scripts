@@ -105,7 +105,7 @@ configure_laptop_utils(){
 
     echo
     echo -e "${GREEN}${BOLD}Installing Audio...${RESET}"
-    apt install pipewire pipewire-pulse wireplumber -y
+    apt install pipewire pipewire-pulse wireplumber pasystray -y
     apt install --no-install-recommends pavucontrol -y
 
     echo
@@ -118,7 +118,7 @@ configure_laptop_utils(){
 
     echo
     echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
-    apt install network-manager nm-tray -y
+    apt install network-manager -y
 
     echo
     echo -e "${GREEN}${BOLD}Installing Screen Lock...${RESET}"
