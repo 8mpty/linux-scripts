@@ -8,6 +8,25 @@ GREEN="\e[32m"
 YELLOW="\e[33m"
 RESET="\e[0m"
 
+system_check() {
+    echo
+    echo -e "${GREEN}${BOLD}Detecting system type...${RESET}"
+    if command -v apt &> /dev/null; then
+        package_manager="apt"
+        echo -e "${GREEN}${BOLD}Debian-based system detected (Using apt).${RESET}"
+    elif command -v dnf &> /dev/null; then
+        package_manager="dnf"
+        echo -e "${GREEN}${BOLD}Fedora-based system detected (Using dnf).${RESET}"
+    else
+        echo -e "${RED}${BOLD}Unsupported distribution. Exiting...${RESET}"
+        exit 1
+    fi
+
+    check_script_exec
+}
+
+
+
 check_script_exec(){
     echo -e "${GREEN}${BOLD}Running from curl pipe. Setting up repository...${RESET}"
     TEMP_DIR=$(mktemp -d)
@@ -15,7 +34,7 @@ check_script_exec(){
 
     git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR" || {
         echo -e "${YELLOW}${BOLD}Failed to clone repository. Checking if git is installed...${RESET}"
-        sudo apt update && sudo apt install git curl -y
+        sudo $package_manager update && sudo $package_manager install git curl -y
         git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR"
     }
     
@@ -28,7 +47,7 @@ check_script_exec(){
 }
 
 main(){
-    check_script_exec
+    system_check
     ./install-setup.sh
     rm -rf "$TEMP_DIR"
 }

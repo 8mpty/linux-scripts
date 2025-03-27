@@ -30,11 +30,28 @@ check_root() {
   fi
 }
 
+system_check() {
+    echo
+    echo -e "${GREEN}${BOLD}Detecting system type...${RESET}"
+    if command -v apt &> /dev/null; then
+        package_manager="apt"
+        echo -e "${GREEN}${BOLD}Debian-based system detected (Using apt).${RESET}"
+    elif command -v dnf &> /dev/null; then
+        package_manager="dnf"
+        echo -e "${GREEN}${BOLD}Fedora-based system detected (Using dnf).${RESET}"
+    else
+        echo -e "${RED}${BOLD}Unsupported distribution. Exiting...${RESET}"
+        exit 1
+    fi
+
+    install_dialog
+}
+
 install_dialog() {
     if ! command -v dialog &> /dev/null; then
         echo -e "${GREEN}${BOLD}Installing dialog package...${RESET}"
-        apt-get update
-        apt-get install -y dialog
+        $package_manager update
+        $package_manager install -y dialog
     fi
 }
 
@@ -154,7 +171,7 @@ show_menu() {
 
 main() {
     check_root
-    install_dialog
+    system_check
     show_menu
     echo
     echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"

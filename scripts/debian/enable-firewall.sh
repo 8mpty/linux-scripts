@@ -16,8 +16,25 @@ check_root() {
   fi
 }
 
+system_check() {
+    echo
+    echo -e "${GREEN}${BOLD}Detecting system type...${RESET}"
+    if command -v apt &> /dev/null; then
+        package_manager="apt"
+        echo -e "${GREEN}${BOLD}Debian-based system detected (Using apt).${RESET}"
+    elif command -v dnf &> /dev/null; then
+        package_manager="dnf"
+        echo -e "${GREEN}${BOLD}Fedora-based system detected (Using dnf).${RESET}"
+    else
+        echo -e "${RED}${BOLD}Unsupported distribution. Exiting...${RESET}"
+        exit 1
+    fi
+
+    firewall_setup
+}
+
 firewall_setup(){
-    apt install gufw -y
+    $package_manager install gufw -y
  
     # Firewall rules
     ufw limit 22/tcp
