@@ -44,7 +44,7 @@ start_install(){
     echo
     echo -e "${GREEN}${BOLD}Installing Custom XFCE...${RESET}"
     
-    apt update && $package_manager install $task_desktop $task_dekstop_rec $base_list $custom_goodies -y
+    $package_manager update && $package_manager install $task_desktop $task_dekstop_rec $base_list $custom_goodies -y
     sed -i 's/^#greeter-hide-users=false/greeter-hide-users=false/' /etc/lightdm/lightdm.conf
 
     echo
