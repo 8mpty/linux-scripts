@@ -9,5 +9,7 @@
 !.gitattributes
 !.README.md
 
+dev-*.sh
+
 *.bak
 *.bk
