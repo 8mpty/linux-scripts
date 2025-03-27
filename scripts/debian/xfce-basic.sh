@@ -16,63 +16,44 @@ check_root() {
   fi
 }
 
-package_manager_choice() {
-  read -t 5 -p "Would you like to install using Nala (Y/n)? [default: y] " choice
+task_desktop="tasksel xorg xserver-xorg-video-all xserver-xorg-input-all"
+task_dekstop_rec="xdg-utils fonts-symbola avahi-daemon libnss-mdns anacron eject iw alsa-utils sudo"
+base_list="desktop-base xfce4"
+custom_goodies="xfce4-battery-plugin xfce4-clipman-plugin xfce4-diskperf-plugin xfce4-genmon-plugin xfce4-netload-plugin xfce4-notifyd xfce4-places-plugin xfce4-screenshooter xfce4-wavelan-plugin xfce4-whiskermenu-plugin"
+op_list="neofetch kitty curl git"
+utils_list="network-manager blueman"
 
-  # If no input or any invalid input, default to 'y'
-  case "${choice,,}" in
-    [Yy]*)
-      PM="nala"
-      ;;
-    [Nn]*)
-      PM="apt"
-      ;;
-    *)
-      echo -e "${YELLOW}No valid input detected. Defaulting to Nala.${RESET}"
-      PM="nala"
-      ;;
-  esac
+system_check() {
+    echo
+    echo -e "${GREEN}${BOLD}Detecting system type...${RESET}"
+    if command -v apt &> /dev/null; then
+        package_manager="apt"
+        echo -e "${GREEN}${BOLD}Debian-based system detected (Using apt).${RESET}"
+    elif command -v dnf &> /dev/null; then
+        package_manager="dnf"
+        echo -e "${GREEN}${BOLD}Fedora-based system detected (Using dnf).${RESET}"
+    else
+        echo -e "${RED}${BOLD}Unsupported distribution. Exiting...${RESET}"
+        exit 1
+    fi
+
+    start_install
 }
 
-install_nala() {
-    echo -e "${GREEN}${BOLD}Downloading Nala Script...${RESET}"
-    apt install curl -y
-    curl https://gitlab.com/volian/volian-archive/-/raw/main/install-nala.sh | bash
+start_install(){
+    echo
+    echo -e "${GREEN}${BOLD}Installing Custom XFCE...${RESET}"
+    
+    apt update && $package_manager install $task_desktop $task_dekstop_rec $base_list $custom_goodies -y
+    sed -i 's/^#greeter-hide-users=false/greeter-hide-users=false/' /etc/lightdm/lightdm.conf
 
-    echo -e "${GREEN}${BOLD}Updating System...${RESET}"
-    apt update -y
-
-    echo -e "${GREEN}${BOLD}Installing Nala...${RESET}"
-    apt install nala -y
-
+    echo
     echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
 }
 
-PACKAGE_LIST="git curl neofetch micro kitty xorg xserver-xorg-video-all xserver-xorg-input-all desktop-base xdg-utils fonts-symbola avahi-daemon libnss-mdns anacron eject iw alsa-utils sudo cups tasksel=3.73 lightdm light-locker xfce4-power-manager mousepad default-dbus-session-bus atril tango-icon-theme network-manager-gnome synaptic system-config-printer orca libxfce4ui-utils thunar xfce4-appfinder xfce4-panel xfce4-pulseaudio-plugin xfce4-session xfce4-settings xfconf xfdesktop4 xfwm4 mousepad thunar-archive-plugin thunar-media-tags-plugin xfce4-battery-plugin xfce4-clipman-plugin xfce4-cpufreq-plugin xfce4-cpugraph-plugin xfce4-dict xfce4-diskperf-plugin xfce4-fsguard-plugin xfce4-genmon-plugin xfce4-netload-plugin xfce4-notifyd xfce4-places-plugin xfce4-screenshooter xfce4-sensors-plugin xfce4-smartbookmark-plugin xfce4-systemload-plugin xfce4-taskmanager xfce4-timer-plugin xfce4-verve-plugin xfce4-wavelan-plugin xfce4-weather-plugin xfce4-whiskermenu-plugin xfce4-xkb-plugin"
-PURGE_LIST="xterm imagemagick"
-
-# Function to install basic xfce stuff and some "goodies" from "xfce4-goodies"
-install_xfce() {
-  # Install Nala if chosen
-  if [ "$PM" == "nala" ]; then
-    install_nala
-  fi
-
-  echo -e "${GREEN}${BOLD}Installing Xfce...${RESET}"
-
-  # Use (Nala or APT) to install the packages
-  $PM install $PACKAGE_LIST -y
-  # $PM purge $PURGE_LIST -y
-
-  sed -i 's/^#greeter-hide-users=false/greeter-hide-users=false/' /etc/lightdm/lightdm.conf
-
-  echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
-}
-
-main() {
-  check_root
-  package_manager_choice
-  install_xfce
+main(){
+    check_root
+    system_check
 }
 
 main

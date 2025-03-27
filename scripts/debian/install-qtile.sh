@@ -105,7 +105,7 @@ configure_laptop_utils(){
 
     echo
     echo -e "${GREEN}${BOLD}Installing Audio...${RESET}"
-    apt install pipewire pipewire-pulse wireplumber pasystray -y
+    apt install pipewire pulseaudio-utils wireplumber pipewire-pulse pasystray -y
     apt install --no-install-recommends pavucontrol -y
 
     echo
@@ -119,6 +119,8 @@ configure_laptop_utils(){
     echo
     echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
     apt install network-manager -y
+
+    sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 
     echo
     echo -e "${GREEN}${BOLD}Installing Screen Lock...${RESET}"
