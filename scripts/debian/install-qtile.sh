@@ -118,7 +118,7 @@ configure_laptop_utils(){
 
     echo
     echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
-    apt install network-manager -y
+    apt install network-manager-gnome -y
 
     sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 
