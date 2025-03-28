@@ -20,10 +20,10 @@ system_check() {
     echo
     echo -e "${GREEN}${BOLD}Detecting system type...${RESET}"
     if command -v apt &> /dev/null; then
+        echo -e "${GREEN}${BOLD}Debian-based system detected.${RESET}"
         sudo sed -i 's/^GRUB_TIMEOUT=5/GRUB_TIMEOUT=2/' /etc/default/grub && sudo update-grub
     elif command -v dnf &> /dev/null; then
-    sudo sed -i 's/^GRUB_TIMEOUT=5/GRUB_TIMEOUT=2/' /etc/default/grub && 
-        echo -e "${GREEN}${BOLD}Fedora-based system detected (Using dnf).${RESET}"
+        echo -e "${GREEN}${BOLD}Fedora-based system detected.${RESET}"
     else
         echo -e "${RED}${BOLD}Unsupported distribution. Exiting...${RESET}"
         exit 1

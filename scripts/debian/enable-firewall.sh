@@ -51,7 +51,7 @@ firewall_setup(){
 }
 
 main(){
-    firewall_setup
+    system_check
 }
 
 main
