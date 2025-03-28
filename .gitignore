@@ -4,6 +4,8 @@
 # Allow specific files and folders
 !scripts/
 !scripts/**
+!dotfiles/
+!dotfiles/**
 
 !.gitignore
 !.gitattributes
@@ -13,3 +15,5 @@ dev-*.sh
 
 *.bak
 *.bk
+
+__pycache__/
