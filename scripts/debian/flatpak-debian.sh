@@ -16,6 +16,10 @@ check_root() {
   fi
 }
 
+# Get the current username and home directory dynamically
+USERNAME=$(logname)
+HOMEDIR=$(eval echo ~"$REAL_USER")
+
 install_flatpak_repo(){
   echo -e "${GREEN}${BOLD}Installing Flatpak...${RESET}"
   apt update
@@ -53,23 +57,9 @@ install_flatpak_repo(){
 
   # Add Flathub repository
   echo -e "${GREEN}${BOLD}Adding Flathub repository...${RESET}"
-  flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+  sudo -u "$USERNAME" bash -c "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo"
 
-  # Get the current username and home directory dynamically
-  USERNAME=$(logname)
-  HOMEDIR=$(eval echo ~"$REAL_USER")
-
-  # Fix permissions for Flatpak repository
-  echo -e "${GREEN}${BOLD}Fixing Flatpak repository permissions...${RESET}"
-
-  FLATPAK_DIR="$HOMEDIR/.local/share/flatpak"
-
-  if [ -d "$FLATPAK_DIR" ]; then
-    chown -R "$USERNAME:$USERNAME" "$FLATPAK_DIR"
-    chmod -R u+rw "$FLATPAK_DIR"
-  else
-    echo -e "${YELLOW}${BOLD}Skipping: $FLATPAK_DIR does not exist.${RESET}"
-  fi
+  # fix_flatpak_dir
 
   echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
   echo -e "To install applications from Flathub, use your software center or run:"
@@ -94,6 +84,19 @@ test_ask_reboot(){
       echo "Skipping reboot. You may want to log out and back in for changes to take effect."
       ;;
   esac
+}
+
+fix_flatpak_dir(){
+  # Fix permissions for Flatpak repository
+  echo -e "${GREEN}${BOLD}Fixing Flatpak repository permissions...${RESET}"
+
+  FLATPAK_DIR="$HOMEDIR/.local/share/flatpak"
+  if [ -d "$FLATPAK_DIR" ]; then
+    chown -R "$USERNAME:$USERNAME" "$FLATPAK_DIR"
+    chmod -R u+rw "$FLATPAK_DIR"
+  else
+    echo -e "${YELLOW}${BOLD}Skipping: $FLATPAK_DIR does not exist.${RESET}"
+  fi
 }
 
 main(){

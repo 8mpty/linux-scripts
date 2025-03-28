@@ -17,8 +17,8 @@ check_root() {
 }
 
 extra_decision() {
-  read -p "Would you like to install laptop utils (bluetooth, wifi etc.)?" lapchoice
-  read -p "Would you like to auto install and configure lightdm?" ldmchoice
+  read -p "Would you like to install laptop utils (bluetooth, wifi etc.)? " lapchoice
+  read -p "Would you like to auto install and configure lightdm? " ldmchoice
 
   # If no input or any invalid input, default to 'y'
   case "${lapchoice,,}" in
