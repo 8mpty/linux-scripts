@@ -18,3 +18,6 @@ pasystray & # Audio Tray
 killall xfwm4
 killall xfce4-panel
 killall xfdesktop
+
+# VMware Copy-Paste Fix (Debian)
+/usr/bin/vmware-user-suid-wrapper
