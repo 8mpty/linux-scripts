@@ -19,5 +19,6 @@ killall xfwm4
 killall xfce4-panel
 killall xfdesktop
 
-# VMware Copy-Paste Fix (Debian)
+
+# VMware Copy-Paste Fix (Debian) # sudo apt install open-vm-tools-desktop
 /usr/bin/vmware-user-suid-wrapper

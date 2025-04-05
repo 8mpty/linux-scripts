@@ -53,14 +53,15 @@ extra_decision() {
 REAL_USER=$(logname)
 REAL_USER_HOME=$(eval echo ~"$REAL_USER")
 
-OTHERS_LIST="git curl rofi kitty neofetch micro thunar"
-PYTHON_LIST="python3 python3-pip python3-venv python3-v-sim python-dbus-dev python3-xcffib python3-cairocffi"
-QTILE_LIST="xorg xserver-xorg xinit xdg-utils libpangocairo-1.0-0 libxkbcommon-x11-dev sxiv psutils"
+# Maybe not needed?? (libxkbcommon-x11-dev, psutils, xserver-xorg,python3-v-sim)
+OTHERS_LIST="git curl rofi kitty neofetch micro thunar sxiv xdg-utils"
+PYTHON_LIST="python3 python3-venv python-dbus-dev"
+QTILE_LIST="xorg xinit python3-pip libpangocairo-1.0-0 python3-xcffib python3-cairocffi"
 
 install_dependencies(){
     echo
     echo -e "${GREEN}${BOLD}Installing Qtile Dependencies...${RESET}"
-    apt update && apt install --no-install-recommends $OTHERS_LIST $PYTHON_LIST $QTILE_LIST -y
+    apt update && apt install $OTHERS_LIST $PYTHON_LIST $QTILE_LIST -y
     echo -e "${GREEN}${BOLD}Finished installing of Qtile Dependencies...${RESET}"
 }
 
