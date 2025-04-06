@@ -53,7 +53,7 @@ extra_decision() {
 REAL_USER=$(logname)
 REAL_USER_HOME=$(eval echo ~"$REAL_USER")
 
-# Maybe not needed?? (libxkbcommon-x11-dev, psutils, xserver-xorg,python3-v-sim)
+# Maybe not needed?? (libxkbcommon-x11-dev, psutils, xserver-xorg, python3-v-sim)
 OTHERS_LIST="git curl rofi kitty neofetch micro thunar sxiv xdg-utils"
 PYTHON_LIST="python3 python3-venv python-dbus-dev"
 QTILE_LIST="xorg xinit python3-pip libpangocairo-1.0-0 python3-xcffib python3-cairocffi"
@@ -69,7 +69,12 @@ configuration(){
     echo
     echo -e "${GREEN}${BOLD}Configuring Qtile...${RESET}"
 
-    sudo -u "$REAL_USER" xdg-user-dirs-update
+    if ! sudo -u "$REAL_USER" bash -c '[ -d "$HOME/Desktop" ] && [ -d "$HOME/Documents" ] && [ -d "$HOME/Downloads" ]'; then
+        echo -e "${GREEN}Creating XDG user directories...${RESET}"
+        sudo -u "$REAL_USER" xdg-user-dirs-update
+    else
+        echo -e "${GREEN}XDG user directories already exist, skipping update.${RESET}"
+    fi
 
     # Create necessary directories
     sudo -u "$REAL_USER" bash -c "mkdir -p \"$REAL_USER_HOME/.local/src\" && mkdir -p \"$REAL_USER_HOME/.local/bin\""
@@ -97,6 +102,9 @@ configuration(){
         fi
         source \"$REAL_USER_HOME/.bashrc\"
     "
+    
+    # For Network Manager
+    sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 }
 
 configure_laptop_utils(){
@@ -121,11 +129,12 @@ configure_laptop_utils(){
     echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
     
     # Basic Network Manager (No GUI/Applet)
-    apt install network-manager -y
+    # apt install network-manager -y
 
     # "Feature Packed" Network Manager (With GUI/CLI/Applet)
-    # apt install network-manager-gnome -y
+    apt install network-manager-gnome -y
 
+    # For Network Manager
     sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
 
     echo
