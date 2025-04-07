@@ -88,7 +88,7 @@ configuration(){
     echo
 
     echo -e "${GREEN}${BOLD}Installing Python Packages...${RESET}"
-    sudo -u "$REAL_USER" bash -c "\"$REAL_USER_HOME/.local/src/qtile_venv/bin/pip\" install qtile qtile-extras psutil"
+    sudo -u "$REAL_USER" bash -c "\"$REAL_USER_HOME/.local/src/qtile_venv/bin/pip\" install qtile psutil"
 
     echo
 

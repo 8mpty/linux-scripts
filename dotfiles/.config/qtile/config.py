@@ -355,7 +355,7 @@ def init_widgets_list():
         widget.GroupBox(**groupbox_style),
         widget.Sep(**sep_style),
         widget.TaskList(fontsize=15, padding=6, highlight_method="block", border=colors["pink"], title_width_method="uniform"),
-        widget.WindowName(**window_name_style),
+        # widget.WindowName(**window_name_style),
         widget.WidgetBox(
             **widget_box_style,
             text_closed="󰍞",
