@@ -1,9 +1,11 @@
-import subprocess, os, re
+import subprocess, os, re, shutil
 from libqtile import bar, hook, layout, widget
 from libqtile.config import Screen, Click, Drag, Key, Group, Match
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
+# qtile cmd-obj -o cmd -f reload_config
+# qtile cmd-obj -o cmd -f restart
 
 ########################################################################
 # ██╗░░░██╗░█████╗░██████╗░██╗░█████╗░██████╗░██╗░░░░░███████╗░██████╗ #
@@ -61,8 +63,9 @@ mouse_scroll_btn = "Button2"
 mouse_right_btn = "Button3"
 
 # Applications
-terminal = guess_terminal()
+terminal = shutil.which("kitty") or guess_terminal()
 filemanager = "thunar"
+screenshot = "xfce4-screenshooter"
 
 # Rofi Scripts
 rofi_app_menu = "rofi -show drun"
@@ -115,10 +118,9 @@ groupbox_style = dict(
     highlight_method='block',
     inactive=colors["grey"],
     fontsize=17,
-    padding=3,
     urgent_alert_method="border",
     this_current_screen_border=colors["pink"],
-    hide_unused=True
+    # hide_unused=True
 )
 
 window_name_style = dict(
@@ -261,6 +263,7 @@ custom_controls = [
     Key([alt], tab, lazy.spawn(rofi_alt_tab)),
     Key([win], "l", lazy.spawn(rofi_power_menu)),  
     Key([win], "e", lazy.spawn(filemanager)),
+    Key([win, shift], "s",lazy.spawn(screenshot)),
 ]
 
 # Export Keys to Qtile
@@ -284,10 +287,10 @@ keys = [
 ##########################################################################################
 
 groups = []
-grp_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-grp_labels = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
-grp_matches = [[Match(wm_class=re.compile(r"code"))], Match(wm_class=re.compile(r"zen|firefox-esr|firefox")), "", "", "", "", "", "", ""]
-grp_layouts = ["", "", "", "", "", "", "", "", ""]
+grp_names = ["1", "2", "3", "4", "5"]
+grp_labels = ["1", "2", "3", "4", "5"]
+grp_matches = [[Match(wm_class=re.compile(r"code"))], Match(wm_class=re.compile(r"zen|firefox-esr|firefox")), "", "", ""]
+grp_layouts = ["", "", "", "", ""]
 
 for i in range(len(grp_names)):
     groups.append(
@@ -324,7 +327,7 @@ layouts = [
 
 widget_defaults = dict(
     font="FiraCodeNerdFont",
-    fontsize=20,
+    # fontsize=20,
 )
 
 extension_widgets = widget_defaults.copy()
@@ -350,30 +353,16 @@ else:
 
 def init_widgets_list():
     widgets_list = [
-        widget.TextBox("", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_app_menu)}, fontsize=28),
+        # widget.TextBox("", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_app_menu)}, fontsize=28),
         widget.Sep(**sep_style),
         widget.GroupBox(**groupbox_style),
         widget.Sep(**sep_style),
-        # widget.TaskList(fontsize=15, padding=6, highlight_method="block", border=colors["pink"], title_width_method="uniform"),
-        widget.WindowName(**window_name_style),
-        widget.WidgetBox(
-            **widget_box_style,
-            text_closed="󰍞",
-            widgets=[
-                widget.CurrentLayout(),
-                widget.Sep(**sep_style),
-                battery_widget,
-                widget.Systray(),
-            ]
-        ),
-        widget.WidgetBox(
-            **widget_box_style,
-            start_opened=True,
-            text_closed="󰍞",
-            widgets=[
-                widget.Clock(format="%a, %d/%m/%Y | %H:%M:%S %p", **clock_style),
-            ]
-        ),
+        widget.CurrentLayout(fontsize=15),
+        widget.Sep(**sep_style),
+        widget.TaskList(fontsize=15, padding=6, highlight_method="block", border=colors["pink"], title_width_method="uniform"),
+        widget.Sep(**sep_style),
+        widget.WidgetBox(**widget_box_style, text_closed="󰍞", widgets=[ battery_widget, widget.Systray()]),
+        widget.WidgetBox(**widget_box_style, start_opened=True, text_closed="󰍞", widgets=[widget.Clock(format="%a, %d/%m/%Y | %H:%M:%S %p", **clock_style)]),
         widget.TextBox("󰈆 ", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_power_menu)}, fontsize=22),
     ]
     return widgets_list
@@ -407,13 +396,13 @@ floating_layout = layout.Floating(
 
 def init_widgets_main():
     widgets_main = init_widgets_list()
-    del widgets_main[4:5]
+    # del widgets_main[4:5] #BRUHHHHHH
     return widgets_main
 
 def init_widgets_main_bottom():
     widgets_screen2 = init_widgets_list()
     widgets_screen2 = [
-        widgets_list[2]
+        widgets_list[3]
     ]
     return widgets_screen2
 
@@ -421,6 +410,7 @@ def init_screens():
     return [
         # Screen(top=bar.Gap(1)), # No bar
         Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
+        # Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), left=bar.Bar(widgets=init_widgets_main_bottom(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), bottom=bar.Bar(widgets=init_widgets_main_bottom(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(bottom=bar.Bar(widgets=init_widgets_main_bottom(), size=38)),
     ]
