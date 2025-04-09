@@ -7,7 +7,7 @@
 # ╚══════╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░░╚═════╝░░░░╚═╝░░░  ╚═════╝░░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚══════╝╚═════╝░ #
 ############################################################################################################
 
-bar_size = 28
+bar_size = 38
 
 colors = {
     "white" : "FFFFFF",
@@ -19,7 +19,7 @@ colors = {
 
 layout_config={
     # "margin": [0, 10, 10, 10], # Top, Right, Bottom, Left
-    "margin": 5,
+    "margin": 10,
     "border_width": 2,
     "border_focus": colors["pink"],
     "border_normal": colors["grey"],
@@ -78,6 +78,7 @@ tasklist_style = dict(
 )
 
 power_btn_style = dict(
+    text=" ",
     fontsize=int(bar_size * 0.54)
 )
 
@@ -89,10 +90,16 @@ memory_style = dict(
     fontsize=int(bar_size * 0.47)
 )
 
-def gen_pool_style(f, update_int):
+appmenu_style = dict(
+    text="",
+    fontsize=int(bar_size * 0.7)
+)
+
+def gen_pool_style(f, update_int, mse_callbacks=None):
     return dict(
         fontsize=int(bar_size * 0.47),
         func=f,
         update_interval=int(update_int),
         fmt="{}",
+        mouse_callbacks=mse_callbacks or {}
     )

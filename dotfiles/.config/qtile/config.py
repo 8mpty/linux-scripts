@@ -295,31 +295,33 @@ widget_defaults = dict(
 extension_widgets = widget_defaults.copy()
     
 battery_widget = widget.GenPollText(
-    **styles.gen_pool_style(custom_widgets.battery_status, 15),
-    mouse_callbacks={mouse_left_btn: lazy.spawn(power_manager)}
+    **styles.gen_pool_style(custom_widgets.battery_status, 15, {
+        mouse_left_btn: lazy.spawn(power_manager)
+    })
 )
 
 clock_widget = widget.GenPollText(
-    **styles.gen_pool_style(custom_widgets.clock_func, 0),
-    mouse_callbacks={mouse_left_btn: lambda: custom_widgets.toggle_clock(clock_widget)}
+    **styles.gen_pool_style(custom_widgets.clock_func, 0, {
+        mouse_left_btn: lambda: custom_widgets.toggle_clock(clock_widget)
+    })
 )
 
 audio_widget = widget.GenPollText(
-    **styles.gen_pool_style(custom_widgets.audio_status, 0),
-    mouse_callbacks={
+    **styles.gen_pool_style(custom_widgets.audio_status, 0, {
         mouse_right_btn : lazy.spawn(pavucontrol),
         mouse_left_btn: lazy.spawn(audio_mute_toggle)
-    }
+    })
 )
 
 ip_widget = widget.GenPollText(
-    **styles.gen_pool_style(custom_widgets.ip_status, 10),
-    mouse_callbacks={mouse_left_btn: lazy.spawn(network_manager)}
+    **styles.gen_pool_style(custom_widgets.ip_status, 10, {
+        mouse_left_btn: lazy.spawn(network_manager)
+    })
 )
 
 def init_widgets_list():
     widgets_list = [
-        # widget.TextBox("", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_app_menu)}, fontsize=28),
+        widget.TextBox(**styles.appmenu_style, mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_app_menu)}),
         widget.Sep(**styles.sep_style),
         widget.GroupBox(**styles.groupbox_style),
         widget.Sep(**styles.sep_style),
@@ -335,13 +337,13 @@ def init_widgets_list():
             widget.Sep(**styles.sep_style),
             audio_widget,
             widget.Sep(**styles.sep_style),
-            widget.Memory(**styles.memory_style),
+            widget.Memory(**styles.memory_style, mouse_callbacks={mouse_left_btn: lazy.group['sp'].dropdown_toggle('htop')}),
             widget.Sep(**styles.sep_style),
             widget.Systray(**styles.systray_style)
             ]
         ),
         clock_widget,
-        widget.TextBox(" ", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_power_menu)}, **styles.power_btn_style),
+        widget.TextBox(**styles.power_btn_style, mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_power_menu)}),
     ]
     return widgets_list
 
