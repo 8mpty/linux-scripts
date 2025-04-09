@@ -3,6 +3,8 @@ from libqtile import bar, hook, layout, widget
 from libqtile.config import Screen, Click, Drag, Key, Group, Match
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
+import custom_wdigets
+import styles
 
 # qtile cmd-obj -o cmd -f reload_config
 # qtile cmd-obj -o cmd -f restart
@@ -66,6 +68,13 @@ mouse_right_btn = "Button3"
 terminal = shutil.which("kitty") or guess_terminal()
 filemanager = "thunar"
 screenshot = "xfce4-screenshooter"
+pavucontrol = "pavucontrol"
+power_manager = "xfce4-power-manager-settings"
+
+# Audio
+audio_mute_toggle = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+audio_inc_5 = "pactl set-sink-volume @DEFAULT_SINK@ +5%"
+audio_dec_5 = "pactl set-sink-volume @DEFAULT_SINK@ -5%"
 
 # Rofi Scripts
 rofi_app_menu = "rofi -show drun"
@@ -74,67 +83,6 @@ rofi_power_menu = f"{HOME_DIR}/.config/rofi/rofi-power-menu.sh"
 
 # Static Wallpaper Path
 wallpaper_path = f"{HOME_DIR}/Pictures/wallpaper3.png"
-
-
-############################################################################################################
-# ██╗░░░░░░█████╗░██╗░░░██╗░█████╗░██╗░░░██╗████████╗  ░██████╗████████╗██╗░░░██╗██╗░░░░░███████╗░██████╗ #
-# ██║░░░░░██╔══██╗╚██╗░██╔╝██╔══██╗██║░░░██║╚══██╔══╝  ██╔════╝╚══██╔══╝╚██╗░██╔╝██║░░░░░██╔════╝██╔════╝ #
-# ██║░░░░░███████║░╚████╔╝░██║░░██║██║░░░██║░░░██║░░░  ╚█████╗░░░░██║░░░░╚████╔╝░██║░░░░░█████╗░░╚█████╗░ #
-# ██║░░░░░██╔══██║░░╚██╔╝░░██║░░██║██║░░░██║░░░██║░░░  ░╚═══██╗░░░██║░░░░░╚██╔╝░░██║░░░░░██╔══╝░░░╚═══██╗ #
-# ███████╗██║░░██║░░░██║░░░╚█████╔╝╚██████╔╝░░░██║░░░  ██████╔╝░░░██║░░░░░░██║░░░███████╗███████╗██████╔╝ #
-# ╚══════╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░░╚═════╝░░░░╚═╝░░░  ╚═════╝░░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚══════╝╚═════╝░ #
-############################################################################################################
-
-colors = {
-    "white" : "FFFFFF",
-    "pink" : "C90076",
-    "black": "000000",
-    "grey": "404040",
-    "green": "00FF00"
-}
-
-layout_config={
-    # "margin": [0, 10, 10, 10], # Top, Right, Bottom, Left
-    "border_width": 2,
-    "border_focus": colors["pink"],
-    "border_normal": colors["grey"],
-    "grow_amount": 2 # For Column Layout
-}
-
-sep_style = dict(
-    foreground=colors["white"], 
-    linewidth=2, 
-    size_percent=60, 
-    padding=10
-)
-
-clock_style = dict(
-    foreground=colors["white"], 
-    fontsize=15
-)
-
-groupbox_style = dict(
-    disable_drag=True,
-    highlight_method='block',
-    inactive=colors["grey"],
-    fontsize=17,
-    urgent_alert_method="border",
-    this_current_screen_border=colors["pink"],
-    # hide_unused=True
-)
-
-window_name_style = dict(
-    fontsize=15,
-    foreground=colors["white"],
-    background=colors["black"],
-)
-
-widget_box_style = dict(
-    close_button_location="right",
-    fontsize=40,
-    padding=6,
-    text_open="󰍟",
-)
 
 
 ################################################################################
@@ -263,7 +211,14 @@ custom_controls = [
     Key([alt], tab, lazy.spawn(rofi_alt_tab)),
     Key([win], "l", lazy.spawn(rofi_power_menu)),  
     Key([win], "e", lazy.spawn(filemanager)),
-    Key([win, shift], "s",lazy.spawn(screenshot)),
+    Key([win, shift], "s", lazy.spawn(screenshot)),
+
+    Key([], audio_inc, lazy.spawn(audio_inc_5)),
+    Key([], audio_dec, lazy.spawn(audio_dec_5)),
+    Key([], audio_mute, lazy.spawn(audio_mute_toggle)),
+
+    # Key([win, control], "equal", ), # Increase Bar size +2 + reload_config
+    # Key([win, control], "minus", ), # Decrease Bar size -2 + reload_config
 ]
 
 # Export Keys to Qtile
@@ -309,9 +264,9 @@ for i in groups:
     )
 
 layouts = [
-    layout.Max(**layout_config),
-    layout.MonadTall(**layout_config),
-    layout.Columns(**layout_config),
+    layout.Max(**styles.layout_config),
+    layout.MonadTall(**styles.layout_config),
+    layout.Columns(**styles.layout_config),
     
     # Try more layouts by unleashing below layouts.
     # layout.Tile(**layout_config),
@@ -327,43 +282,47 @@ layouts = [
 
 widget_defaults = dict(
     font="FiraCodeNerdFont",
-    # fontsize=20,
 )
 
 extension_widgets = widget_defaults.copy()
+    
+battery_widget = widget.GenPollText(
+    **styles.gen_pool_style(custom_wdigets.battery_status, 15),
+    mouse_callbacks={mouse_left_btn: lazy.spawn(power_manager)}
+)
 
-def is_laptop():
-    return os.path.exists('/sys/class/power_supply/BAT0')
+clock_widget = widget.GenPollText(
+    **styles.gen_pool_style(custom_wdigets.clock_func, 0),
+    mouse_callbacks={mouse_left_btn: lambda: custom_wdigets.toggle_clock(clock_widget)}
+)
 
-# Create the battery widget
-if is_laptop():
-    battery_widget = widget.Battery(
-        format="{char} {percent:2.0%} {time}",
-        charge_char="⚡",
-        discharge_char="🔋",
-        full_char="☻",
-        update_interval=10,
-    )
-else:
-    battery_widget = widget.TextBox(
-        text="AC",
-        fontsize=15,
-        foreground=colors['green'],  # Green color
-    )
+audio_widget = widget.GenPollText(
+    **styles.gen_pool_style(custom_wdigets.audio_status, 0),
+    mouse_callbacks={
+        mouse_right_btn : lazy.spawn(pavucontrol),
+        mouse_left_btn: lazy.spawn(audio_mute_toggle)
+    }
+)
 
 def init_widgets_list():
     widgets_list = [
         # widget.TextBox("", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_app_menu)}, fontsize=28),
-        widget.Sep(**sep_style),
-        widget.GroupBox(**groupbox_style),
-        widget.Sep(**sep_style),
-        widget.CurrentLayout(fontsize=15),
-        widget.Sep(**sep_style),
-        widget.TaskList(fontsize=15, padding=6, highlight_method="block", border=colors["pink"], title_width_method="uniform"),
-        widget.Sep(**sep_style),
-        widget.WidgetBox(**widget_box_style, text_closed="󰍞", widgets=[ battery_widget, widget.Systray()]),
-        widget.WidgetBox(**widget_box_style, start_opened=True, text_closed="󰍞", widgets=[widget.Clock(format="%a, %d/%m/%Y | %H:%M:%S %p", **clock_style)]),
-        widget.TextBox("󰈆 ", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_power_menu)}, fontsize=22),
+        widget.Sep(**styles.sep_style),
+        widget.GroupBox(**styles.groupbox_style),
+        widget.Sep(**styles.sep_style),
+        widget.CurrentLayout(**styles.window_mode_style),
+        widget.Sep(**styles.sep_style),
+        widget.TaskList(**styles.tasklist_style),
+        widget.Sep(**styles.sep_style),
+        widget.WidgetBox(**styles.widget_box_style, widgets=[ 
+            battery_widget, 
+            widget.Sep(**styles.sep_style), 
+            audio_widget, 
+            widget.Sep(**styles.sep_style), 
+            widget.Systray()]
+        ),
+        clock_widget,
+        widget.TextBox(" ", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_power_menu)}, **styles.power_btn_style),
     ]
     return widgets_list
 
@@ -409,7 +368,7 @@ def init_widgets_main_bottom():
 def init_screens():
     return [
         # Screen(top=bar.Gap(1)), # No bar
-        Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
+        Screen(top=bar.Bar(widgets=init_widgets_main(), size=styles.bar_size), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), left=bar.Bar(widgets=init_widgets_main_bottom(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), bottom=bar.Bar(widgets=init_widgets_main_bottom(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(bottom=bar.Bar(widgets=init_widgets_main_bottom(), size=38)),
