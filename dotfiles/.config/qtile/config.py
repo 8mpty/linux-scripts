@@ -83,7 +83,7 @@ rofi_alt_tab="rofi -show window"
 rofi_power_menu = f"{HOME_DIR}/.config/rofi/rofi-power-menu.sh"
 
 # Static Wallpaper Path
-wallpaper_path = f"{HOME_DIR}/Pictures/wallpaper3.png"
+wallpaper_path = f"{HOME_DIR}/.config/qtile/images/wallpaper1.jpg"
 
 
 ################################################################################
