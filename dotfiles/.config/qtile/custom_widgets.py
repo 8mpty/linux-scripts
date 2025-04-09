@@ -1,6 +1,6 @@
 from pathlib import Path
 from datetime import datetime
-import subprocess
+import subprocess, re
 
 # ========== Battery Widget Function ==========
 def battery_status():
@@ -88,3 +88,18 @@ def audio_status():
         return "🔊 ??%"
     except Exception:
         return "Audio Error"
+
+
+# ========== IP Widget Function ==========  
+def ip_status():
+    try:
+        output = subprocess.check_output(["ip", "-4", "-o", "addr", "show", "up"], text=True)
+        for line in output.splitlines():
+            parts = line.split()
+            iface = parts[1]
+            ip_addr = parts[3].split("/")[0]
+            if iface != "lo":
+                return f"{iface}: {ip_addr}"
+        return "No IP"
+    except Exception:
+        return "IP Error"

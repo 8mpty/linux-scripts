@@ -7,7 +7,7 @@
 # ╚══════╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░░╚═════╝░░░░╚═╝░░░  ╚═════╝░░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚══════╝╚═════╝░ #
 ############################################################################################################
 
-bar_size = 38
+bar_size = 28
 
 colors = {
     "white" : "FFFFFF",
@@ -19,6 +19,7 @@ colors = {
 
 layout_config={
     # "margin": [0, 10, 10, 10], # Top, Right, Bottom, Left
+    "margin": 5,
     "border_width": 2,
     "border_focus": colors["pink"],
     "border_normal": colors["grey"],
@@ -38,7 +39,6 @@ window_name_style = dict(
     background=colors["black"],
 )
 
-
 clock_style = dict(
     foreground=colors["white"], 
     fontsize=int(bar_size * 0.4)  # Adjust scaling as needed
@@ -51,6 +51,7 @@ groupbox_style = dict(
     fontsize=int(bar_size * 0.45),
     urgent_alert_method="border",
     this_current_screen_border=colors["pink"],
+    # hide_unused=True
 )
 
 widget_box_style = dict(
@@ -62,25 +63,36 @@ widget_box_style = dict(
 )
 
 window_mode_style = dict(
-    fontsize=int(bar_size * 0.4)
+    fontsize=int(bar_size * 0.47)
 )
 
 tasklist_style = dict(
     fontsize=int(bar_size * 0.4), 
-    padding=int(bar_size * 0.16), 
+    padding=int(bar_size * 0.18), 
     highlight_method="block", 
     border=colors["pink"], 
-    title_width_method="uniform"
+    title_width_method="uniform",
+    txt_maximized="  ",
+    txt_minimized="  ",
+    txt_floating="🗗"
 )
 
 power_btn_style = dict(
     fontsize=int(bar_size * 0.54)
 )
 
-def gen_pool_style(f, update_in):
+systray_style = dict(
+    icon_size=int(bar_size * 0.6)
+)
+
+memory_style = dict(
+    fontsize=int(bar_size * 0.47)
+)
+
+def gen_pool_style(f, update_int):
     return dict(
         fontsize=int(bar_size * 0.47),
         func=f,
-        update_interval=int(update_in),
+        update_interval=int(update_int),
         fmt="{}",
     )

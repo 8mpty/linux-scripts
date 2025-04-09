@@ -1,9 +1,9 @@
 import subprocess, os, re, shutil
 from libqtile import bar, hook, layout, widget
-from libqtile.config import Screen, Click, Drag, Key, Group, Match
+from libqtile.config import Screen, Click, Drag, Key, Group, Match, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
-import custom_wdigets
+import custom_widgets
 import styles
 
 # qtile cmd-obj -o cmd -f reload_config
@@ -67,9 +67,10 @@ mouse_right_btn = "Button3"
 # Applications
 terminal = shutil.which("kitty") or guess_terminal()
 filemanager = "thunar"
-screenshot = "xfce4-screenshooter"
+screenshot = "xfce4-screenshooter -r"
 pavucontrol = "pavucontrol"
 power_manager = "xfce4-power-manager-settings"
+network_manager = "nm-connection-editor"
 
 # Audio
 audio_mute_toggle = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
@@ -170,15 +171,6 @@ window_grow = [
     Key([win, control], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
 ]
 
-launch_terminal = [
-    # -----------------------
-    #    Launch Terminal 
-    # -----------------------
-
-    # Win + Enter = Launches terminal
-    Key([win], enter, lazy.spawn(terminal)),
-]
-
 layout_controls = [
     # -----------------------
     #    Layout Controls 
@@ -203,10 +195,18 @@ custom_controls = [
     #    Custom Controls 
     # -----------------------
 
+    # Win + Enter = Open [Terminal]
     # Win + Space = Open [Rofi App] menu
     # Alt + Tab = Open [Rofi "Alt Tab"] menu
     # Win + L = Open [Rofi "Power Menu"] menu
     # Win + E = Open ["thunar"]
+    # Win + Shift + S = Open [xfce4-screenshotter] + [Only Region]
+    # Keyboard Audio Increase Key = Increase Volume by +5
+    # Keyboard Audio Decrease Key = Decrease Volume by +5
+    # Keyboard Audio Mute Key = Toggle Audio Mute
+    # Win + Control + h = Open [Kitty + Htop]
+    # Win + Control + Enter = Open [ScratchPad Kitty]
+    Key([win], enter, lazy.spawn(terminal)),
     Key([win], space, lazy.spawn(rofi_app_menu)),
     Key([alt], tab, lazy.spawn(rofi_alt_tab)),
     Key([win], "l", lazy.spawn(rofi_power_menu)),  
@@ -219,6 +219,9 @@ custom_controls = [
 
     # Key([win, control], "equal", ), # Increase Bar size +2 + reload_config
     # Key([win, control], "minus", ), # Decrease Bar size -2 + reload_config
+
+    Key([win, control], "h", lazy.group['sp'].dropdown_toggle('htop')),
+    Key([win, control], enter, lazy.group['sp'].dropdown_toggle('kitty'))
 ]
 
 # Export Keys to Qtile
@@ -226,7 +229,6 @@ keys = [
     *window_focus,
     *window_movement,
     *window_grow,
-    *launch_terminal,
     *layout_controls,
     *custom_controls,
 ]
@@ -263,6 +265,12 @@ for i in groups:
         ]
     )
 
+# (1 - width or height) / 2
+groups.append(ScratchPad("sp", [
+    DropDown("htop", "kitty -e htop", width=0.6, height=0.6, x=0.2, y=0.2, on_focus_lost_hide=False),
+    DropDown("kitty", "kitty", width=0.7, height=0.7, x=0.15, y=0.15, on_focus_lost_hide=False),
+]))
+
 layouts = [
     layout.Max(**styles.layout_config),
     layout.MonadTall(**styles.layout_config),
@@ -287,21 +295,26 @@ widget_defaults = dict(
 extension_widgets = widget_defaults.copy()
     
 battery_widget = widget.GenPollText(
-    **styles.gen_pool_style(custom_wdigets.battery_status, 15),
+    **styles.gen_pool_style(custom_widgets.battery_status, 15),
     mouse_callbacks={mouse_left_btn: lazy.spawn(power_manager)}
 )
 
 clock_widget = widget.GenPollText(
-    **styles.gen_pool_style(custom_wdigets.clock_func, 0),
-    mouse_callbacks={mouse_left_btn: lambda: custom_wdigets.toggle_clock(clock_widget)}
+    **styles.gen_pool_style(custom_widgets.clock_func, 0),
+    mouse_callbacks={mouse_left_btn: lambda: custom_widgets.toggle_clock(clock_widget)}
 )
 
 audio_widget = widget.GenPollText(
-    **styles.gen_pool_style(custom_wdigets.audio_status, 0),
+    **styles.gen_pool_style(custom_widgets.audio_status, 0),
     mouse_callbacks={
         mouse_right_btn : lazy.spawn(pavucontrol),
         mouse_left_btn: lazy.spawn(audio_mute_toggle)
     }
+)
+
+ip_widget = widget.GenPollText(
+    **styles.gen_pool_style(custom_widgets.ip_status, 10),
+    mouse_callbacks={mouse_left_btn: lazy.spawn(network_manager)}
 )
 
 def init_widgets_list():
@@ -312,14 +325,20 @@ def init_widgets_list():
         widget.Sep(**styles.sep_style),
         widget.CurrentLayout(**styles.window_mode_style),
         widget.Sep(**styles.sep_style),
+        # widget.WindowName(**styles.window_name_style),
         widget.TaskList(**styles.tasklist_style),
         widget.Sep(**styles.sep_style),
-        widget.WidgetBox(**styles.widget_box_style, widgets=[ 
-            battery_widget, 
-            widget.Sep(**styles.sep_style), 
-            audio_widget, 
-            widget.Sep(**styles.sep_style), 
-            widget.Systray()]
+        widget.WidgetBox(**styles.widget_box_style, widgets=[
+            ip_widget,
+            widget.Sep(**styles.sep_style),
+            battery_widget,
+            widget.Sep(**styles.sep_style),
+            audio_widget,
+            widget.Sep(**styles.sep_style),
+            widget.Memory(**styles.memory_style),
+            widget.Sep(**styles.sep_style),
+            widget.Systray(**styles.systray_style)
+            ]
         ),
         clock_widget,
         widget.TextBox(" ", mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_power_menu)}, **styles.power_btn_style),
@@ -379,7 +398,6 @@ if __name__ in ["config", "__main__"]:
     widgets_list = init_widgets_list()
     widgets_main_top = init_widgets_main()
     widgets_main_bot = init_widgets_main_bottom()
-    
 
 dgroups_key_binder = None
 dgroups_app_rules = []  # type: list
