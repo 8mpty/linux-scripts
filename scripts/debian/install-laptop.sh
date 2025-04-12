@@ -16,10 +16,17 @@ check_root() {
   fi
 }
 
+# Get the real user who invoked sudo
+REAL_USER=$(logname)
+REAL_USER_HOME=$(eval echo ~"$REAL_USER")
+
 AUDIO_PKGS="pavucontrol pulseaudio"
 SCREEN_PKGS="brightnessctl xfce4-power-manager"
 BLUETOOTH_PKGS="bluez blueman"
 NETWORK_PKGS="network-manager network-manager-gnome"
+APPEARANCE_PKGS="libgtk-3-0 gnome-themes-extra lxappearance"
+I3LOCK_COLOR_PKGS="autoconf gcc make pkg-config libpam0g-dev libcairo2-dev libfontconfig1-dev libxcb-composite0-dev libev-dev libx11-xcb-dev libxcb-xkb-dev libxcb-xinerama0-dev libxcb-randr0-dev libxcb-image0-dev libxcb-util0-dev libxcb-xrm-dev libxkbcommon-dev libxkbcommon-x11-dev libjpeg-dev libgif-dev"
+BETTERLOCKSCREEN_PKGS="bc imagemagick x11-xserver-utils x11-utils x11-xkb-utils"
 
 configure_laptop_utils(){
     echo
@@ -59,14 +66,28 @@ configure_laptop_utils(){
     #apt install light-locker -y
 
     echo
+    echo -e "${GREEN}${BOLD}Installing lxappearance...${RESET}"
+    apt install $APPEARANCE_PKGS -y
+
+    echo
+    echo -e "${GREEN}${BOLD}Installing & Setting up betterlockscreen and dependencies...${RESET}"
+    apt install $I3LOCK_COLOR_PKGS $BETTERLOCKSCREEN_PKGS -y
+    
+    # Check if i3lock-color directory exists and remove it if it does
+    if [ -d "/home/$REAL_USER/i3lock-color" ]; then
+        echo -e "${YELLOW}${BOLD}Removing existing i3lock-color directory...${RESET}"
+        sudo rm -rf "/home/$REAL_USER/i3lock-color"
+    fi
+
+    wget https://raw.githubusercontent.com/betterlockscreen/betterlockscreen/main/install.sh -O - -q | sudo bash -s system
+
+    echo
     echo -e "${GREEN}${BOLD}Successfully installed laptop utils.${RESET}"
 }
-
 
 main(){
     check_root
     configure_laptop_utils
 }
-
 
 main

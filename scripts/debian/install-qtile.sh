@@ -113,7 +113,6 @@ configure_lightdm(){
 
 main(){
     check_root
-    #extra_decision
     install_dependencies
     configuration
     configure_xinit

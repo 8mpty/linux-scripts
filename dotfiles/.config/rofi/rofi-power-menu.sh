@@ -3,10 +3,10 @@
 lock_screen() {
     if command -v xflock4 >/dev/null 2>&1; then
         xflock4
-    elif command -v i3lock >/dev/null 2>&1; then
-        i3lock
     elif command -v betterlockscreen >/dev/null 2>&1; then
         betterlockscreen -l
+    elif command -v i3lock >/dev/null 2>&1; then
+        i3lock
     elif command -v light-locker-command >/dev/null 2>&1; then
         light-locker-command -l
     else
