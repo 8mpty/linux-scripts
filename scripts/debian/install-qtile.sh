@@ -70,9 +70,13 @@ configuration(){
         source \"$REAL_USER_HOME/.bashrc\"
     "
     
-    # For Network Manager
-    sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-    service NetworkManager restart
+    if [ -f "/etc/NetworkManager/NetworkManager.conf" ]; then
+        echo "NetworkManager.conf found. Updating..."
+        sed -i 's/^managed=false/managed=true/' "$NM_CONF"
+        service NetworkManager restart
+    else
+        echo "NetworkManager.conf not found. Skipping..."
+    fi
 }
 
 configure_lightdm(){
