@@ -79,6 +79,10 @@ configure_laptop_utils(){
         sudo rm -rf "/home/$REAL_USER/i3lock-color"
     fi
 
+     # Clone i3lock-color repository again
+    sudo -u "$REAL_USER" bash -c "git clone https://github.com/Raymo111/i3lock-color.git"
+    sudo -u "$REAL_USER" bash -c "cd i3lock-color && ./install-i3lock-color.sh"
+
     wget https://raw.githubusercontent.com/betterlockscreen/betterlockscreen/main/install.sh -O - -q | sudo bash -s system
 
     echo
