@@ -96,7 +96,6 @@ configure_xinit() {
     fi
 }
 
-
 configure_lightdm(){
     echo
     echo -e "${GREEN}${BOLD}Installing and Configuring LightDM...${RESET}"
@@ -117,6 +116,7 @@ main(){
     #extra_decision
     install_dependencies
     configuration
+    configure_xinit
 }
 
 main
