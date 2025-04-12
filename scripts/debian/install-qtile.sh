@@ -79,6 +79,24 @@ configuration(){
     fi
 }
 
+configure_xinit() {
+    XINITRC="$REAL_USER_HOME/.xinitrc"
+    ENTRY="exec qtile start"
+
+    if [ -f "$XINITRC" ]; then
+        if ! grep -Fxq "$ENTRY" "$XINITRC"; then
+            echo "$ENTRY" >> "$XINITRC"
+            echo ".xinitrc found. Added '$ENTRY' to the end of the file."
+        else
+            echo "'$ENTRY' already exists in .xinitrc. Skipping."
+        fi
+    else
+        echo "$ENTRY" > "$XINITRC"
+        echo ".xinitrc not found. Created and added '$ENTRY'."
+    fi
+}
+
+
 configure_lightdm(){
     echo
     echo -e "${GREEN}${BOLD}Installing and Configuring LightDM...${RESET}"
