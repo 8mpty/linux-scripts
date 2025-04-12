@@ -16,39 +16,6 @@ check_root() {
   fi
 }
 
-extra_decision() {
-  read -p "Would you like to install laptop utils (bluetooth, wifi etc.)? " lapchoice
-  read -p "Would you like to auto install and configure lightdm? " ldmchoice
-
-  # If no input or any invalid input, default to 'y'
-  case "${lapchoice,,}" in
-    [Yy]*)
-      lapchoice="true"
-      ;;
-    [Nn]*)
-      lapchoice="false"
-      ;;
-    *)
-      echo -e "${YELLOW}No valid input detected. Defaulting to Y.${RESET}"
-      lapchoice="true"
-      ;;
-  esac
-  
-  # If no input or any invalid input, default to 'y'
-  case "${ldmchoice,,}" in
-    [Yy]*)
-      ldmchoice="true"
-      ;;
-    [Nn]*)
-      ldmchoice="false"
-      ;;
-    *)
-      echo -e "${YELLOW}No valid input detected. Defaulting to Y.${RESET}"
-      ldmchoice="true"
-      ;;
-  esac
-}
-
 # Get the real user who invoked sudo
 REAL_USER=$(logname)
 REAL_USER_HOME=$(eval echo ~"$REAL_USER")
@@ -105,44 +72,7 @@ configuration(){
     
     # For Network Manager
     sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-}
-
-configure_laptop_utils(){
-    echo
-    echo -e "${GREEN}${BOLD}Installing laptop utils...${RESET}"
-    apt update
-
-    echo
-    echo -e "${GREEN}${BOLD}Installing Audio...${RESET}"
-    apt install pipewire pulseaudio-utils wireplumber pipewire-pulse pasystray -y
-    apt install --no-install-recommends pavucontrol -y
-
-    echo
-    echo -e "${GREEN}${BOLD}Installing Display | Brightness...${RESET}"
-    apt install brightnessctl xfce4-power-manager -y
-
-    echo
-    echo -e "${GREEN}${BOLD}Installing Bluetooth...${RESET}"
-    apt install blueman -y
-
-    echo
-    echo -e "${GREEN}${BOLD}Installing Network (Wifi | LAN)...${RESET}"
-    
-    # Basic Network Manager (No GUI/Applet)
-    # apt install network-manager -y
-
-    # "Feature Packed" Network Manager (With GUI/CLI/Applet)
-    apt install network-manager-gnome -y
-
-    # For Network Manager
-    sed -i 's/^managed=false/managed=true/' /etc/NetworkManager/NetworkManager.conf
-
-    echo
-    echo -e "${GREEN}${BOLD}Installing Screen Lock...${RESET}"
-    apt install light-locker -y
-
-    echo
-    echo -e "${GREEN}${BOLD}Successfully installed laptop utils.${RESET}"
+    service NetworkManager restart
 }
 
 configure_lightdm(){
@@ -160,26 +90,11 @@ configure_lightdm(){
     echo -e "${GREEN}${BOLD}LightDM configured to start Qtile.${RESET}"
 }
 
-disclaimers(){
-    echo -e "${YELLOW}${BOLD}Installation Finished!.${RESET}"
-    echo -e "${YELLOW}${BOLD}Please do the necessary configuration if you already have a Desktop Environment Installed.${RESET}"
-}
-
 main(){
     check_root
-    extra_decision
+    #extra_decision
     install_dependencies
     configuration
-    if [ "$lapchoice" == "true" ]; then
-        configure_laptop_utils
-    fi
-
-    if [ "$ldmchoice" == "true" ]; then
-        configure_lightdm
-    fi
-
-    # END
-    disclaimers
 }
 
 main

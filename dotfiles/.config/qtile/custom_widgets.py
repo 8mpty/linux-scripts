@@ -75,7 +75,7 @@ def audio_status():
         muted = "yes" in output
 
         if muted:
-            return "🔇 Muted"
+            return "󰝟 Muted"
 
         # Get volume level
         volume_output = subprocess.check_output(["pactl", "get-sink-volume", "@DEFAULT_SINK@"], text=True)
@@ -83,9 +83,9 @@ def audio_status():
         for line in volume_output.splitlines():
             if "%" in line:
                 percent = line.split("/")[1].strip()
-                return f"🔊 {percent}"
+                return f"󰕾 {percent}"
 
-        return "🔊 ??%"
+        return "󰖁 ??%"
     except Exception:
         return "Audio Error"
 
