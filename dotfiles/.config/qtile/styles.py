@@ -14,7 +14,8 @@ colors = {
     "pink" : "C90076",
     "black": "000000",
     "grey": "404040",
-    "green": "00FF00"
+    "green": "00FF00",
+    "yt-grey": "0F0F0F"
 }
 
 layout_config={

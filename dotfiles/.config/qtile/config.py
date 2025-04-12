@@ -321,8 +321,8 @@ ip_widget = widget.GenPollText(
 
 def init_widgets_list():
     widgets_list = [
-        widget.TextBox(**styles.appmenu_style, mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_app_menu)}),
-        widget.Sep(**styles.sep_style),
+        #widget.TextBox(**styles.appmenu_style, mouse_callbacks={mouse_left_btn: lazy.spawn(rofi_app_menu)}),
+        #widget.Sep(**styles.sep_style),
         widget.GroupBox(**styles.groupbox_style),
         widget.Sep(**styles.sep_style),
         widget.CurrentLayout(**styles.window_mode_style),
@@ -389,7 +389,7 @@ def init_widgets_main_bottom():
 def init_screens():
     return [
         # Screen(top=bar.Gap(1)), # No bar
-        Screen(top=bar.Bar(widgets=init_widgets_main(), size=styles.bar_size), wallpaper=wallpaper_path, wallpaper_mode='fill'),
+        Screen(top=bar.Bar(widgets=init_widgets_main(), background=styles.colors["yt-grey"], size=styles.bar_size), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), left=bar.Bar(widgets=init_widgets_main_bottom(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(top=bar.Bar(widgets=init_widgets_main(), size=38), bottom=bar.Bar(widgets=init_widgets_main_bottom(), size=38), wallpaper=wallpaper_path, wallpaper_mode='fill'),
         # Screen(bottom=bar.Bar(widgets=init_widgets_main_bottom(), size=38)),
