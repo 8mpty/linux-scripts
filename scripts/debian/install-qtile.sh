@@ -21,7 +21,7 @@ REAL_USER=$(logname)
 REAL_USER_HOME=$(eval echo ~"$REAL_USER")
 
 # Maybe not needed?? (libxkbcommon-x11-dev, psutils, xserver-xorg, python3-v-sim)
-OTHERS_LIST="git curl rofi kitty neofetch micro thunar sxiv xdg-utils"
+OTHERS_LIST="git curl rofi kitty neofetch micro thunar mousepad sxiv xdg-utils"
 PYTHON_LIST="python3 python3-venv python-dbus-dev"
 QTILE_LIST="xorg xinit python3-pip libpangocairo-1.0-0 python3-xcffib python3-cairocffi"
 

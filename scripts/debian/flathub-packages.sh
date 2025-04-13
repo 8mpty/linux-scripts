@@ -15,23 +15,22 @@ check_root() {
   fi
 }
 
+# Get the current username and home directory dynamically
+USERNAME=$(logname)
+HOMEDIR=$(eval echo ~"$REAL_USER")
+
 flatpak_apps=(
     #"one.ablaze.floorp",
     #"com.mattjakeman.ExtensionManager",
     #"com.google.AndroidStudio",
-    app.zen_browser.zen
+    # app.zen_browser.zen,
+    io.github.shiftey.Desktop
 )
 
 installApps() {
-  # Get the current username and home directory dynamically
-  USERNAME=$(logname)
-  HOMEDIR=$(eval echo ~"$REAL_USER")
-
-  # fix_flatpak_dir
-
   for app in "${flatpak_apps[@]}"; do
     echo "Installing $app..."
-    flatpak install flathub $app -y
+    sudo -u "$REAL_USER" flatpak install flathub $app -y
   done
 }
 
