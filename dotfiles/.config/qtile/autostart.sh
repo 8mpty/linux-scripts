@@ -1,14 +1,13 @@
 #!/bin/sh
 
 kitty & # Terminal
-#light-locker & # Light Locker
-#xfce4-screensaver & # Screensaver Locker
+light-locker & # Light Locker
+xfce4-screensaver & # Screensaver Locker
 
 #systemctl --user enable --now pipewire pipewire-pulse wireplumber & # Audio
 #systemctl --user enable --now bluetooth & # Bluetooth
 #systemctl enable NetworkManager # Network
 
-# nm-tray & # Network
 nm-applet --indicator & # Network
 blueman-applet & # Bluetooth
 xfce4-power-manager & # Power Manager | Display

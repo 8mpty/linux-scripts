@@ -79,20 +79,20 @@ configuration(){
     fi
 }
 
-configure_xinit() {
-    XINITRC="$REAL_USER_HOME/.xinitrc"
+configure_xsession() {
+    XSESSION="$REAL_USER_HOME/.xsession"
     ENTRY="exec qtile start"
 
-    if [ -f "$XINITRC" ]; then
-        if ! grep -Fxq "$ENTRY" "$XINITRC"; then
-            echo "$ENTRY" >> "$XINITRC"
-            echo ".xinitrc found. Added '$ENTRY' to the end of the file."
+    if [ -f "$XSESSION" ]; then
+        if ! grep -Fxq "$ENTRY" "$XSESSION"; then
+            echo "$ENTRY" >> "$XSESSION"
+            echo ".xsession found. Added '$ENTRY' to the end of the file."
         else
-            echo "'$ENTRY' already exists in .xinitrc. Skipping."
+            echo "'$ENTRY' already exists in .xsession. Skipping."
         fi
     else
-        echo "$ENTRY" > "$XINITRC"
-        echo ".xinitrc not found. Created and added '$ENTRY'."
+        echo "$ENTRY" > "$XSESSION"
+        echo ".xsession not found. Created and added '$ENTRY'."
     fi
 }
 
@@ -115,7 +115,7 @@ main(){
     check_root
     install_dependencies
     configuration
-    configure_xinit
+    configure_xsession
 }
 
 main
