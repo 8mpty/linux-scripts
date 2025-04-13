@@ -63,6 +63,8 @@ down_arrow = "Down"
 mouse_left_btn = "Button1"
 mouse_scroll_btn = "Button2"
 mouse_right_btn = "Button3"
+mouse_scroll_up = "Button4"
+mouse_scroll_down = "Button5"
 
 # Applications
 terminal = shutil.which("kitty") or guess_terminal()
@@ -74,8 +76,8 @@ network_manager = "nm-connection-editor"
 
 # Audio
 audio_mute_toggle = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-audio_inc_5 = "pactl set-sink-volume @DEFAULT_SINK@ +5%"
-audio_dec_5 = "pactl set-sink-volume @DEFAULT_SINK@ -5%"
+audio_inc_1 = "pactl set-sink-volume @DEFAULT_SINK@ +1%"
+audio_dec_1 = "pactl set-sink-volume @DEFAULT_SINK@ -1%"
 
 # Rofi Scripts
 rofi_app_menu = "rofi -show drun"
@@ -213,8 +215,8 @@ custom_controls = [
     Key([win], "e", lazy.spawn(filemanager)),
     Key([win, shift], "s", lazy.spawn(screenshot)),
 
-    Key([], audio_inc, lazy.spawn(audio_inc_5)),
-    Key([], audio_dec, lazy.spawn(audio_dec_5)),
+    Key([], audio_inc, lazy.spawn(audio_inc_1)),
+    Key([], audio_dec, lazy.spawn(audio_dec_1)),
     Key([], audio_mute, lazy.spawn(audio_mute_toggle)),
 
     # Key([win, control], "equal", ), # Increase Bar size +2 + reload_config
@@ -309,7 +311,9 @@ clock_widget = widget.GenPollText(
 audio_widget = widget.GenPollText(
     **styles.gen_pool_style(custom_widgets.audio_status, 0, {
         mouse_right_btn : lazy.spawn(pavucontrol),
-        mouse_left_btn: lazy.spawn(audio_mute_toggle)
+        mouse_left_btn: lazy.spawn(audio_mute_toggle),
+        mouse_scroll_up: lazy.spawn(audio_inc_1),
+        mouse_scroll_down: lazy.spawn(audio_dec_1),
     })
 )
 
