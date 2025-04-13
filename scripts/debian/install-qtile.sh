@@ -115,7 +115,14 @@ main(){
     check_root
     install_dependencies
     configuration
-    configure_xsession
+
+    if dpkg -s lightdm &> /dev/null; then
+        echo -e "${GREEN}${BOLD}LightDM is already installed. Running configure_lightdm...${RESET}"
+        configure_lightdm
+    else
+        echo -e "${YELLOW}${BOLD}LightDM not found. Falling back to configure_xsession...${RESET}"
+        configure_xsession
+    fi
 }
 
 main
