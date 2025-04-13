@@ -16,9 +16,9 @@ check_root() {
   fi
 }
 
-# Get the current username and home directory dynamically
-USERNAME=$(logname)
-HOMEDIR=$(eval echo ~"$REAL_USER")
+# Get the real user who invoked sudo
+REAL_USER=$(logname)
+REAL_USER_HOME=$(eval echo ~"$REAL_USER")
 
 install_flatpak_repo(){
   echo -e "${GREEN}${BOLD}Installing Flatpak...${RESET}"
@@ -57,9 +57,7 @@ install_flatpak_repo(){
 
   # Add Flathub repository
   echo -e "${GREEN}${BOLD}Adding Flathub repository...${RESET}"
-  sudo -u "$USERNAME" bash -c "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo"
-
-  # fix_flatpak_dir
+  sudo -u "$REAL_USER" bash -c "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo"
 
   echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"
   echo -e "To install applications from Flathub, use your software center or run:"
@@ -69,27 +67,11 @@ install_flatpak_repo(){
   echo -e "${YELLOW}${BOLD}It's recommended to restart your system for changes to take full effect and required to install flathub packages.${RESET}"
 }
 
-# Ask if user wants to reboot
-test_ask_reboot(){
-  read -t 10 -p "Would you like to reboot now? (y/N): " choice
-  echo
-  choice=${choice:-n}
-
-  case "$choice" in
-    y|Y|yes|Yes|YES )
-      echo "System will reboot now...."
-      shutdown -r now
-      ;;
-    * )
-      echo "Skipping reboot. You may want to log out and back in for changes to take effect."
-      ;;
-  esac
-}
-
 fix_flatpak_dir(){
   # Fix permissions for Flatpak repository
   echo -e "${GREEN}${BOLD}Fixing Flatpak repository permissions...${RESET}"
 
+  # fix_flatpak_dir
   FLATPAK_DIR="$HOMEDIR/.local/share/flatpak"
   if [ -d "$FLATPAK_DIR" ]; then
     chown -R "$USERNAME:$USERNAME" "$FLATPAK_DIR"

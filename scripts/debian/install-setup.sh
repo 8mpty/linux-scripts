@@ -13,7 +13,7 @@ RED="\e[31m"
 RESET="\e[0m"
 
 # List of excluded script files
-EXCLUDE_SCRIPTS=("clone.sh" "$(basename "$0")")
+EXCLUDE_SCRIPTS=("clone.sh" "install-setup.sh" "xfce-basic.sh" "$(basename "$0")")
 
 # Function to check if script is running with root privileges
 check_root() {
@@ -53,12 +53,14 @@ show_menu() {
 
     menu_items=()
 
-    # Include .sh scripts except excluded ones
+    # Include .sh scripts
     for script in ./*.sh; do
         [ -f "$script" ] || continue
 
         base=$(basename "$script")
         skip=false
+        
+        # Excluded defined above
         for exclude in "${EXCLUDE_SCRIPTS[@]}"; do
             if [[ "$base" == "$exclude" ]]; then
                 skip=true

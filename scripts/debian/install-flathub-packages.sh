@@ -15,9 +15,9 @@ check_root() {
   fi
 }
 
-# Get the current username and home directory dynamically
-USERNAME=$(logname)
-HOMEDIR=$(eval echo ~"$REAL_USER")
+# Get the real user who invoked sudo
+REAL_USER=$(logname)
+REAL_USER_HOME=$(eval echo ~"$REAL_USER")
 
 flatpak_apps=(
     #"one.ablaze.floorp",
@@ -40,7 +40,7 @@ fix_flatpak_dir(){
 
   FLATPAK_DIR="$HOMEDIR/.local/share/flatpak"
   if [ -d "$FLATPAK_DIR" ]; then
-    chown -R "$USERNAME:$USERNAME" "$FLATPAK_DIR"
+    chown -R "$REAL_USER:$REAL_USER" "$FLATPAK_DIR"
     chmod -R u+rw "$FLATPAK_DIR"
   else
     echo -e "${YELLOW}${BOLD}Skipping: $FLATPAK_DIR does not exist.${RESET}"
