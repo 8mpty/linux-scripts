@@ -30,28 +30,11 @@ check_root() {
   fi
 }
 
-system_check() {
-    echo
-    echo -e "${GREEN}${BOLD}Detecting system type...${RESET}"
-    if command -v apt &> /dev/null; then
-        package_manager="apt"
-        echo -e "${GREEN}${BOLD}Debian-based system detected (Using apt).${RESET}"
-    elif command -v dnf &> /dev/null; then
-        package_manager="dnf"
-        echo -e "${GREEN}${BOLD}Fedora-based system detected (Using dnf).${RESET}"
-    else
-        echo -e "${RED}${BOLD}Unsupported distribution. Exiting...${RESET}"
-        exit 1
-    fi
-
-    install_dialog
-}
-
 install_dialog() {
     if ! command -v dialog &> /dev/null; then
         echo -e "${GREEN}${BOLD}Installing dialog package...${RESET}"
-        $package_manager update
-        $package_manager install -y dialog
+        apt update
+        apt install -y dialog
     fi
 }
 
@@ -85,7 +68,6 @@ run_qtile() {
     ./install-qtile.sh
 }
 
-# Will always be LAST in the menu
 run_update_grub() {
     echo -e "${GREEN}${BOLD}Running update_grub_timeout.sh...${RESET}"
     ./update_grub_timeout.sh
@@ -171,7 +153,7 @@ show_menu() {
 
 main() {
     check_root
-    system_check
+    install_dialog
     show_menu
     echo
     echo -e "${GREEN}${BOLD}Setup completed successfully!${RESET}"

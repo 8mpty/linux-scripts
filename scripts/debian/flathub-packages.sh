@@ -30,7 +30,7 @@ flatpak_apps=(
 installApps() {
   for app in "${flatpak_apps[@]}"; do
     echo "Installing $app..."
-    sudo -u "$REAL_USER" flatpak install flathub $app -y
+    sudo -u "$REAL_USER" bash -c "flatpak install flathub $app -y"
   done
 }
 
