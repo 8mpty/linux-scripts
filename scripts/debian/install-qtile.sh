@@ -20,8 +20,8 @@ check_root() {
 REAL_USER=$(logname)
 REAL_USER_HOME=$(eval echo ~"$REAL_USER")
 
-# Maybe not needed?? (psutils, python3-v-sim)
-OTHERS_LIST="git curl rofi kitty neofetch micro thunar mousepad sxiv xdg-utils"
+# Maybe not needed?? (python3-v-sim)
+OTHERS_LIST="git curl rofi kitty neofetch micro thunar mousepad sxiv xdg-utils htop"
 PYTHON_LIST="python3 python3-venv python-dbus-dev"
 QTILE_LIST="xorg xinit xserver-xorg python3-pip libpangocairo-1.0-0 libxkbcommon-x11-dev python3-xcffib python3-cairocffi"
 
