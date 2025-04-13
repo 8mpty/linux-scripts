@@ -11,7 +11,7 @@ xfce4-screensaver & # Screensaver Locker
 nm-applet --indicator & # Network
 blueman-applet & # Bluetooth
 xfce4-power-manager & # Power Manager | Display
-# pasystray & # Audio Tray
+# pasystray & # Audio Tray 
 
 # Kill XFCE stuff whilst in Qtile session. User is still able to go to the base XFCE session and use a [XFCE] Desktop Environment if so chooses.
 killall xfwm4
