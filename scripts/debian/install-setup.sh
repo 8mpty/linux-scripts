@@ -9,7 +9,11 @@ set -e
 BOLD="\e[1m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
+RED="\e[31m"
 RESET="\e[0m"
+
+# List of excluded script files
+EXCLUDE_SCRIPTS=("clone.sh" "$(basename "$0")")
 
 # Function to check if script is running with root privileges
 check_root() {
@@ -17,7 +21,6 @@ check_root() {
     echo -e "${YELLOW}${BOLD}This script requires root privileges.${RESET}"
     echo -e "${GREEN}Attempting to elevate privileges...${RESET}"
     
-    # Try to use sudo to re-run the script
     if command -v sudo &> /dev/null; then
       echo -e "${YELLOW}${BOLD}Please enter your sudo password to continue.${RESET}"
       exec sudo -E bash "$0" "$@"
@@ -38,41 +41,6 @@ install_dialog() {
     fi
 }
 
-run_enable_firewall() {
-    echo -e "${GREEN}${BOLD}Installing ufw and Gufw...${RESET}"
-    ./enable-firewall.sh
-}
-
-run_gnome_basic() {
-    echo -e "${GREEN}${BOLD}Running gnome-basic.sh...${RESET}"
-    ./gnome-basic.sh
-}
-
-run_xfce_basic() {
-    echo -e "${GREEN}${BOLD}Running xfce-basic.sh...${RESET}"
-    ./xfce-basic.sh
-}
-
-run_flatpak_debian() {
-    echo -e "${GREEN}${BOLD}Running flatpak-debian.sh...${RESET}"
-    ./flatpak-debian.sh
-}
-
-run_flathub_packages() {
-    echo -e "${GREEN}${BOLD}Running flathub-packages.sh...${RESET}"
-    ./flathub-packages.sh
-}
-
-run_qtile() {
-    echo -e "${GREEN}${BOLD}Running install-qtile.sh...${RESET}"
-    ./install-qtile.sh
-}
-
-run_update_grub() {
-    echo -e "${GREEN}${BOLD}Running update_grub_timeout.sh...${RESET}"
-    ./update_grub_timeout.sh
-}
-
 run_reboot() {
     echo -e "${GREEN}${BOLD}Rebooting in 5 seconds. Press Ctrl + C NOW to cancel!${RESET}"
     sleep 5
@@ -83,69 +51,74 @@ show_menu() {
     tempfile=$(mktemp 2>/dev/null) || tempfile=/tmp/test$$
     trap 'rm -f $tempfile' 0 1 2 5 15
 
+    menu_items=()
+
+    # Include .sh scripts except excluded ones
+    for script in ./*.sh; do
+        [ -f "$script" ] || continue
+
+        base=$(basename "$script")
+        skip=false
+        for exclude in "${EXCLUDE_SCRIPTS[@]}"; do
+            if [[ "$base" == "$exclude" ]]; then
+                skip=true
+                break
+            fi
+        done
+        
+        if [[ "$base" == dev-*.sh ]]; then
+            skip=true
+        fi
+
+        $skip && continue
+
+        name="${base%.sh}"
+        description="Run $name script"
+        menu_items+=("$name" "$description" OFF)
+    done
+
+    # Display dialog with menu_items
     dialog --backtitle "System Setup Options" \
-           --title "Select Options To Run" \
-           --checklist "Use SPACE to select/deselect options, ENTER to confirm:" 15 90 5 \
-           "gnome-basic" " Install GNOME basic packages" OFF \
-           "xfce-basic" " Install Xfce basic packages with some xfce4-goodies" OFF \
-           "install-qtile" " Install Qtile WM and LightDM" OFF \
-           "enable-firewall" " Setup and enable firewall" OFF \
-           "flatpak-debian" " Install Flatpak for Debian" OFF \
-           "flathub-packages" " Install Flathub packages" OFF \
-           "update_grub_timeout" " Update GRUB timeout to 2secs" OFF \
-           "reboot" " Reboot system (HIGHLY Recommended)" OFF \
-           2> $tempfile
+           --title "Select Scripts to Run" \
+           --checklist "Use SPACE to select/deselect scripts, ENTER to confirm:" 20 80 12 \
+           "${menu_items[@]}" \
+           "reboot" "Reboot the system" OFF 2> "$tempfile"
 
     if [ $? -ne 0 ]; then
         echo -e "${YELLOW}${BOLD}Setup canceled by user.${RESET}"
         exit 0
     fi
 
-    selected=$(cat $tempfile)
-
+    selected=$(<"$tempfile")
     selected_formatted=$(echo $selected | tr -d '"')
+
     if [ -z "$selected_formatted" ]; then
-        dialog --title "No Selection" --msgbox "No options were selected. Exiting." 8 40
+        dialog --title "No Selection" --msgbox "No scripts were selected. Exiting." 8 40
         exit 0
     fi
 
     dialog --title "Confirm Selection" \
-           --yesno "Are you sure you want to execute the following options?\n\n$selected_formatted" 10 60
+           --yesno "Are you sure you want to execute the following scripts?\n\n$selected_formatted" 10 60
 
     if [ $? -ne 0 ]; then
         echo -e "${YELLOW}${BOLD}Setup canceled by user at confirmation.${RESET}"
         exit 0
     fi
 
-    for option in $selected_formatted; do
-        script_file="./$option.sh"
-        if [ -f "$script_file" ]; then
-            chmod +x "$script_file"
-        fi
-        case $option in
-            "gnome-basic")
-                run_gnome_basic
-                ;;
-            "xfce-basic")
-                run_xfce_basic
-                ;;
-            "install-qtile")
-                run_qtile
-                ;;
-            "enable-firewall")
-                run_enable_firewall
-                ;;
-            "flatpak-debian")
-                run_flatpak_debian
-                ;;
-            "flathub-packages")
-                run_flathub_packages
-                ;;
-            "update_grub_timeout")
-                run_update_grub
-                ;;
-            "reboot")
+    for item in $selected_formatted; do
+        case "$item" in
+            reboot)
                 run_reboot
+                ;;
+            *)
+                script_path="./$item.sh"
+                if [ -f "$script_path" ]; then
+                    echo -e "${GREEN}${BOLD}Running $script_path...${RESET}"
+                    chmod +x "$script_path"
+                    "$script_path"
+                else
+                    echo -e "${YELLOW}${BOLD}Warning: $script_path not found.${RESET}"
+                fi
                 ;;
         esac
     done

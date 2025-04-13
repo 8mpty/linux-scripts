@@ -72,7 +72,7 @@ configuration(){
     
     if [ -f "/etc/NetworkManager/NetworkManager.conf" ]; then
         echo "NetworkManager.conf found. Updating..."
-        sed -i 's/^managed=false/managed=true/' "$NM_CONF"
+        sed -i 's/^managed=false/managed=true/' "/etc/NetworkManager/NetworkManager.conf"
         service NetworkManager restart
     else
         echo "NetworkManager.conf not found. Skipping..."
