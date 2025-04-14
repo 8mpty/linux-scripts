@@ -19,6 +19,10 @@ import styles
 ########################################################################
 
 HOME_DIR = os.path.expanduser("~")
+CONFIG_DIR = f"{HOME_DIR}/.config"
+QTILE_DIR = f"{HOME_DIR}/.config/qtile"
+SCRIPTS_DIR = f"{HOME_DIR}/.config/qtile/scripts"
+ROFI_DIR = f"{HOME_DIR}/.config/rofi"
 
 # Special Keys
 alt = "mod1"
@@ -74,6 +78,10 @@ pavucontrol = "pavucontrol"
 power_manager = "xfce4-power-manager-settings"
 network_manager = "nm-connection-editor"
 
+# Update Bar Function
+def update_bar(inc):
+    return f"{SCRIPTS_DIR}/change_bar_size.sh {inc}"
+
 # Audio
 audio_mute_toggle = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
 audio_inc_1 = "pactl set-sink-volume @DEFAULT_SINK@ +1%"
@@ -82,10 +90,10 @@ audio_dec_1 = "pactl set-sink-volume @DEFAULT_SINK@ -1%"
 # Rofi Scripts
 rofi_app_menu = "rofi -show drun"
 rofi_alt_tab="rofi -show window"
-rofi_power_menu = f"{HOME_DIR}/.config/rofi/rofi-power-menu.sh"
+rofi_power_menu = f"{ROFI_DIR}/rofi-power-menu.sh"
 
 # Static Wallpaper Path
-wallpaper_path = f"{HOME_DIR}/.config/qtile/images/wallpaper1.jpg"
+wallpaper_path = f"{QTILE_DIR}/images/wallpaper2.jpg"
 
 
 ################################################################################
@@ -99,7 +107,7 @@ wallpaper_path = f"{HOME_DIR}/.config/qtile/images/wallpaper1.jpg"
 
 @hook.subscribe.startup_once
 def autostart():
-    subprocess.run(f'{HOME_DIR}/.config/qtile/autostart.sh')
+    subprocess.run(f'{SCRIPTS_DIR}/autostart.sh')
 
 
 #################################################################
@@ -206,8 +214,11 @@ custom_controls = [
     # Keyboard Audio Increase Key = Increase Volume by +5
     # Keyboard Audio Decrease Key = Decrease Volume by +5
     # Keyboard Audio Mute Key = Toggle Audio Mute
-    # Win + Control + h = Open [Kitty + Htop]
+    # Win + Control + Equal = Increases barsize +1
+    # Win + Control + Minus = Decreases barsize -1
+    # Win + Control + H = Open [Kitty + Htop]
     # Win + Control + Enter = Open [ScratchPad Kitty]
+    # Win + Control + M = Open [ScratchPad Mousepad (Notepad)]
     Key([win], enter, lazy.spawn(terminal)),
     Key([win], space, lazy.spawn(rofi_app_menu)),
     Key([alt], tab, lazy.spawn(rofi_alt_tab)),
@@ -219,11 +230,12 @@ custom_controls = [
     Key([], audio_dec, lazy.spawn(audio_dec_1)),
     Key([], audio_mute, lazy.spawn(audio_mute_toggle)),
 
-    # Key([win, control], "equal", ), # Increase Bar size +2 + reload_config
-    # Key([win, control], "minus", ), # Decrease Bar size -2 + reload_config
+    Key([win, control], "equal", lazy.spawn(update_bar(1)), lazy.reload_config()), # Increase Bar size +1 + reload_config
+    Key([win, control], "minus", lazy.spawn(update_bar(-1)), lazy.reload_config()), # Decrease Bar size -1 + reload_config
 
-    Key([win, control], "h", lazy.group['sp'].dropdown_toggle('htop')),
-    Key([win, control], enter, lazy.group['sp'].dropdown_toggle('kitty'))
+    Key([win, control], "h", lazy.group['scratchpad_grp'].dropdown_toggle('htop')),
+    Key([win, control], enter, lazy.group['scratchpad_grp'].dropdown_toggle('kitty')),
+    Key([win, control], "m", lazy.group['scratchpad_grp'].dropdown_toggle('mousepad'))
 ]
 
 # Export Keys to Qtile
@@ -267,10 +279,21 @@ for i in groups:
         ]
     )
 
-# (1 - width or height) / 2
-groups.append(ScratchPad("sp", [
+
+#############################################################################################
+# ░██████╗░█████╗░██████╗░░█████╗░████████╗░█████╗░██╗░░██╗██████╗░░█████╗░██████╗░░██████╗ #
+# ██╔════╝██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║░░██║██╔══██╗██╔══██╗██╔══██╗██╔════╝ #
+# ╚█████╗░██║░░╚═╝██████╔╝███████║░░░██║░░░██║░░╚═╝███████║██████╔╝███████║██║░░██║╚█████╗░ #
+# ░╚═══██╗██║░░██╗██╔══██╗██╔══██║░░░██║░░░██║░░██╗██╔══██║██╔═══╝░██╔══██║██║░░██║░╚═══██╗ #
+# ██████╔╝╚█████╔╝██║░░██║██║░░██║░░░██║░░░╚█████╔╝██║░░██║██║░░░░░██║░░██║██████╔╝██████╔╝ #
+# ╚═════╝░░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚═╝░░░░░╚═╝░░╚═╝╚═════╝░╚═════╝░ #
+#############################################################################################
+
+# (1 - width or height) / 2 = X & Y (Center)
+groups.append(ScratchPad("scratchpad_grp", [
     DropDown("htop", "kitty -e htop", width=0.6, height=0.6, x=0.2, y=0.2, on_focus_lost_hide=False),
     DropDown("kitty", "kitty", width=0.7, height=0.7, x=0.15, y=0.15, on_focus_lost_hide=False),
+    DropDown("mousepad", "mousepad", width=0.7, height=0.7, x=0.15, y=0.15, on_focus_lost_hide=False),    
 ]))
 
 layouts = [

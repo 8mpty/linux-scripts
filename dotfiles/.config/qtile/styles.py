@@ -6,8 +6,19 @@
 # ███████╗██║░░██║░░░██║░░░╚█████╔╝╚██████╔╝░░░██║░░░  ██████╔╝░░░██║░░░░░░██║░░░███████╗███████╗██████╔╝ #
 # ╚══════╝╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░░╚═════╝░░░░╚═╝░░░  ╚═════╝░░░░╚═╝░░░░░░╚═╝░░░╚══════╝╚══════╝╚═════╝░ #
 ############################################################################################################
+import os
 
-bar_size = 28
+HOME_DIR = os.path.expanduser("~")
+QTILE_DIR = f"{HOME_DIR}/.config/qtile/scripts"
+
+def get_bar_size():
+    try:
+        with open(f"{QTILE_DIR}/barsize", "r") as size:
+            return int(size.read())
+    except:
+        return 25  # Default height
+
+bar_size = get_bar_size()
 
 colors = {
     "white" : "FFFFFF",
@@ -68,8 +79,8 @@ window_mode_style = dict(
 )
 
 tasklist_style = dict(
-    fontsize=int(bar_size * 0.4), 
-    padding=int(bar_size * 0.18), 
+    fontsize=int(bar_size * 0.38),
+    padding=int(bar_size * 0.18),
     highlight_method="block", 
     border=colors["pink"], 
     title_width_method="uniform",
