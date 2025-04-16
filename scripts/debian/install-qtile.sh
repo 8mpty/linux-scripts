@@ -106,7 +106,9 @@ configure_lightdm(){
 
     echo -e "[Desktop Entry]\nName=Qtile\nComment=Qtile Session\nExec=$REAL_USER_HOME/.local/bin/qtile start\nType=Application\nKeywords=wm;tiling" > /usr/share/xsessions/qtile.desktop
 
-    sed -i 's/^#greeter-hide-users=false/greeter-hide-users=false/' /etc/lightdm/lightdm.conf
+    if [ -f /etc/lightdm/lightdm.conf ]; then
+        sed -i 's/^#greeter-hide-users=false/greeter-hide-users=false/' /etc/lightdm/lightdm.conf
+    fi
 
     echo -e "${GREEN}${BOLD}LightDM configured to start Qtile.${RESET}"
 }
