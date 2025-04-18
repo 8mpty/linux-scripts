@@ -84,8 +84,9 @@ def update_bar(inc):
 
 # Audio
 audio_mute_toggle = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
-audio_inc_1 = "pactl set-sink-volume @DEFAULT_SINK@ +1%"
-audio_dec_1 = "pactl set-sink-volume @DEFAULT_SINK@ -1%"
+def audio_inc_dec(val: int):
+    sign = "+" if val > 0 else ""
+    return f"pactl set-sink-volume @DEFAULT_SINK@ {sign}{val}%"
 
 # Rofi Scripts
 rofi_app_menu = "rofi -show drun"
@@ -226,8 +227,8 @@ custom_controls = [
     Key([win], "e", lazy.spawn(filemanager)),
     Key([win, shift], "s", lazy.spawn(screenshot)),
 
-    Key([], audio_inc, lazy.spawn(audio_inc_1)),
-    Key([], audio_dec, lazy.spawn(audio_dec_1)),
+    Key([], audio_inc, lazy.spawn(audio_inc_dec(+1))),
+    Key([], audio_dec, lazy.spawn(audio_inc_dec(-1))),
     Key([], audio_mute, lazy.spawn(audio_mute_toggle)),
 
     Key([win, control], "equal", lazy.spawn(update_bar(1)), lazy.reload_config()), # Increase Bar size +1 + reload_config
