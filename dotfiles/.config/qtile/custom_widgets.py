@@ -58,9 +58,9 @@ clock_toggle = [False]  # Mutable for toggle behavior
 
 def clock_func():
     if clock_toggle[0]:
-        return datetime.now().strftime("%a, %d/%m/%Y | %I:%M:%S %p")
+        return datetime.now().strftime("%a, %d/%m/%Y | %H:%M:%S %p")
     else:
-        return datetime.now().strftime("%I:%M:%S %p")
+        return datetime.now().strftime("%H:%M:%S %p")
 
 # Toggle function for the callback
 def toggle_clock(widget):
