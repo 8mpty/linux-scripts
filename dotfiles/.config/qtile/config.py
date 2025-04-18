@@ -85,8 +85,11 @@ def update_bar(inc):
 # Audio
 audio_mute_toggle = "pactl set-sink-mute @DEFAULT_SINK@ toggle"
 def audio_inc_dec(val: int):
-    sign = "+" if val > 0 else ""
-    return f"pactl set-sink-volume @DEFAULT_SINK@ {sign}{val}%"
+    if val > 0:
+        sign = "+"
+    else:
+        sign = "-"
+    return f"pactl set-sink-volume @DEFAULT_SINK@ {sign}{abs(val)}%"
 
 # Rofi Scripts
 rofi_app_menu = "rofi -show drun"
