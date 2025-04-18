@@ -336,8 +336,8 @@ audio_widget = widget.GenPollText(
     **styles.gen_pool_style(custom_widgets.audio_status, 0, {
         mouse_right_btn : lazy.spawn(pavucontrol),
         mouse_left_btn: lazy.spawn(audio_mute_toggle),
-        mouse_scroll_up: lazy.spawn(audio_inc_1),
-        mouse_scroll_down: lazy.spawn(audio_dec_1),
+        mouse_scroll_up: lazy.spawn(audio_inc_dec(+1)),
+        mouse_scroll_down: lazy.spawn(audio_inc_dec(-1)),
     })
 )
 
