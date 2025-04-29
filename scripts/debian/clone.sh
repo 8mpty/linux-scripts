@@ -19,18 +19,18 @@ check_script_exec(){
         git clone https://github.com/8mpty/linux-scripts.git "$TEMP_DIR"
     }
     
-    # Change to the scripts directory
     cd "$TEMP_DIR"
     git switch dev
     cd "scripts/debian"
     chmod +x install-setup.sh
     echo -e "${GREEN}${BOLD}Repository set up. Running from: $(pwd)${RESET}"
+    
+    ./install-setup.sh
+    rm -rf "$TEMP_DIR"
 }
 
 main(){
     check_script_exec
-    ./install-setup.sh
-    rm -rf "$TEMP_DIR"
 }
 
 main
