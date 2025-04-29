@@ -28,6 +28,7 @@ check_script_exec(){
 }
 
 main(){
+    check_script_exec
     ./install-setup.sh
     rm -rf "$TEMP_DIR"
 }
