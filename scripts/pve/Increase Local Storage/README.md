@@ -2,7 +2,7 @@
 
 Step 1: Head into the Proxmox WebUI @ ```192.168.x.x:8006```.
 
-Step 2: Navigate to ```Datacenter``` and under the ```Storage``` option, Remove local-lvm.
+Step 2: Navigate to ```Datacenter``` and under the ```Storage``` option, Remove ```local-lvm```.
 
 Step 2.1 (Optional): Edit ```local``` storage content option for more contents.
 
