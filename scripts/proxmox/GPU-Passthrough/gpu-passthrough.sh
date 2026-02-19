@@ -27,7 +27,7 @@ EOF
 ### Auto-detect CPU Vendor
 CPU_VENDOR=$(lscpu | awk -F: '/Vendor ID:/ {print tolower($2)}' | xargs)
 
-if [[ "$CPU_VENDOR" == "genuineintel intel" ]]; then
+if [[ "$CPU_VENDOR" == "genuineintel" ]]; then
   echo "Detected Intel CPU vendor. Using Intel configuration"
   IOMMU_LINE="quiet intel_iommu=on iommu=pt pcie_acs_override=downstream,multifunction nofb nomodeset video=vesafb:off,efifb:off"
 elif [[ "$CPU_VENDOR" == "authenticamd" ]]; then
