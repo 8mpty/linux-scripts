@@ -1,23 +1,32 @@
 #!/bin/sh
 
 kitty & # Terminal
-light-locker & # Light Locker
-xfce4-screensaver & # Screensaver Locker
 
 #systemctl --user enable --now pipewire pipewire-pulse wireplumber & # Audio
 #systemctl --user enable --now bluetooth & # Bluetooth
 #systemctl enable NetworkManager # Network
 
-nm-applet --indicator & # Network
-blueman-applet & # Bluetooth
-xfce4-power-manager & # Power Manager | Display
-# pasystray & # Audio Tray 
+# Network
+nm-applet --indicator & 
 
-# Kill XFCE stuff whilst in Qtile session. User is still able to go to the base XFCE session and use a [XFCE] Desktop Environment if so chooses.
-killall xfwm4
-killall xfce4-panel
-killall xfdesktop
+# Bluetooth
+blueman-applet & 
 
+# Power Manager | Display
+xfce4-power-manager & 
+
+# Themeing
+lxpolkit &
+
+# Password/Authentication Prompts for sudo access
+xsettingsd &
+
+# Import display variables so portal services can access the X server
+systemctl --user import-environment DISPLAY XAUTHORITY
+
+# Restart portals after import
+ystemctl --user restart xdg-desktop-portal.service
+systemctl --user restart xdg-desktop-portal-gtk.service
 
 # VMware Copy-Paste Fix (Debian) # sudo apt install open-vm-tools-desktop
 /usr/bin/vmware-user-suid-wrapper
